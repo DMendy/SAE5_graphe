@@ -9,8 +9,11 @@ class Grillage:
         self.HEIGHT = 800
         self.WIDTH = 800
         self.canvas = tk.Canvas(root, width=self.WIDTH, height=self.HEIGHT, bg="white")
-        self.canvas.grid(row=0, column=0, padx=10, pady=10)
+        self.canvas.grid(row=1, column=0, padx=10, pady=10)
 
+
+        self.toolbar = tk.Frame(root)
+        self.toolbar.grid(row=0, column=0, pady=5)
 
         self.rows = 40
         self.size = self.HEIGHT//self.rows
@@ -23,20 +26,20 @@ class Grillage:
         self.mode = "white"  # Mode par défaut : couleur des carrés
 
         # Ajouter des boutons pour modifier la couleur des carrés
-        self.bouton_black = tk.Button(root, text="Bloqué", command=lambda: self.changer_mode("black"))
-        self.bouton_black.grid(row=1, column=1, padx=10, pady=10)
+        self.bouton_black = tk.Button(self.toolbar, text="Bloqué", command=lambda: self.changer_mode("black"))
+        self.bouton_black.grid(row=0, column=0, padx=10, pady=10)
 
 
-        self.bouton_white = tk.Button(root, text="Clear", command=lambda: self.changer_mode("white"))
-        self.bouton_white.grid(row=2, column=1, padx=10, pady=10)
+        self.bouton_white = tk.Button(self.toolbar, text="Clear", command=lambda: self.changer_mode("white"))
+        self.bouton_white.grid(row=0, column=2, padx=10, pady=10)
 
 
-        self.bouton_green = tk.Button(root, text="Départ", command=lambda: self.changer_mode("green"))
-        self.bouton_green.grid(row=3, column=1, padx=10, pady=10)
+        self.bouton_green = tk.Button(self.toolbar, text="Départ", command=lambda: self.changer_mode("green"))
+        self.bouton_green.grid(row=0, column=1, padx=10, pady=10)
 
 
-        self.bouton_red = tk.Button(root, text="Objectif", command=lambda: self.changer_mode("red"))
-        self.bouton_red.grid(row=4, column=1, padx=10, pady=10)
+        self.bouton_red = tk.Button(self.toolbar, text="Objectif", command=lambda: self.changer_mode("red"))
+        self.bouton_red.grid(row=0, column=3, padx=10, pady=10)
 
 
     
