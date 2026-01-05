@@ -45,6 +45,27 @@ def dijkstra(graphe, source, objectif):
     print(f"Objectif '{objectif}' inaccessible.")
     return None
 
+def algorithme_glouton(graphe, source, objectif, heuristique):
+    noeud_courant = source
+    chemin = [noeud_courant]
+    visites = set()
+
+    while noeud_courant != objectif:
+        visites.add(noeud_courant)
+        voisins_non_visites = [(voisin, distance) for voisin, distance in graphe[noeud_courant] if voisin not in visites]
+        
+        if not voisins_non_visites:
+            print(f"Aucun voisin non visité disponible depuis '{noeud_courant}'. L'algorithme échoue.")
+            return None
+        
+        prochain_noeud, _ = min(voisins_non_visites, key=lambda x: heuristique[x[0]])
+        print(f"Avance vers '{prochain_noeud}' avec une heuristique de {heuristique[prochain_noeud]}")
+        chemin.append(prochain_noeud)
+        noeud_courant = prochain_noeud
+    
+    print(f"Objectif '{objectif}' atteint!")
+    return chemin
+
 
 def bfs_iteratif(graphe, source):
     visites = set()
