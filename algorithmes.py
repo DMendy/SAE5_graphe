@@ -1,4 +1,6 @@
-def dfs_pondere_iteratif(graphe, source):
+from collections import deque
+
+def dfs_iteratif(graphe, source):
     visites = set()
     pile = [(source, 0)]
 
@@ -12,3 +14,24 @@ def dfs_pondere_iteratif(graphe, source):
             for voisin, poids in reversed(graphe[sommet]):
                 if voisin not in visites:
                     pile.append((voisin, cout + poids))
+
+
+
+
+def bfs_iteratif(graphe, source):
+    visites = set()
+    file = deque([source])
+
+    visites.add(source)
+
+    while file:
+        sommet = file.popleft()
+        print(f"Visite {sommet}")
+
+        for voisin, _ in graphe[sommet]:
+            if voisin not in visites:
+                visites.add(voisin)
+                file.append(voisin)
+
+
+
