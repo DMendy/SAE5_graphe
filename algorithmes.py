@@ -1,4 +1,6 @@
-def dfs_pondere_iteratif(graphe, source):
+from collections import deque
+
+def dfs_iteratif(graphe, source):
     visites = set()
     pile = [(source, 0)]
 
@@ -13,7 +15,7 @@ def dfs_pondere_iteratif(graphe, source):
                 if voisin not in visites:
                     pile.append((voisin, cout + poids))
                     
-                    
+
 def dijkstra(graphe, source, objectif):
     distances = {sommet: float('inf') for sommet in graphe}
     distances[source] = 0
@@ -44,37 +46,20 @@ def dijkstra(graphe, source, objectif):
     return None
 
 
-def algorithme_glouton(graphe, source, objectif, heuristique):
-    noeud_courant = source
-    chemin = [noeud_courant]
+def bfs_iteratif(graphe, source):
     visites = set()
+    file = deque([source])
 
-    while noeud_courant != objectif:
-        visites.add(noeud_courant)
-        voisins_non_visites = [(voisin, distance) for voisin, distance in graphe[noeud_courant] if voisin not in visites]
-        
-        if not voisins_non_visites:
-            print(f"Aucun voisin non visité disponible depuis '{noeud_courant}'. L'algorithme échoue.")
-            return None
-        
-        prochain_noeud, _ = min(voisins_non_visites, key=lambda x: heuristique[x[0]])
-        print(f"Avance vers '{prochain_noeud}' avec une heuristique de {heuristique[prochain_noeud]}")
-        chemin.append(prochain_noeud)
-        noeud_courant = prochain_noeud
-    
-    print(f"Objectif '{objectif}' atteint!")
-    return chemin
+    visites.add(source)
+
+    while file:
+        sommet = file.popleft()
+        print(f"Visite {sommet}")
+
+        for voisin, _ in graphe[sommet]:
+            if voisin not in visites:
+                visites.add(voisin)
+                file.append(voisin)
 
 
-def a_star(graphe, source, objectif, heuristique):
-    chemin_dijkstra = dijkstra(graphe, source, objectif)
-    if chemin_dijkstra is None:
-        print("A* : Le chemin via Dijkstra n'a pas été trouvé.")
-        return None
 
-    chemin_glouton = algorithme_glouton(graphe, source, objectif, heuristique)
-    
-    print(f"Chemin via Dijkstra : {chemin_dijkstra}")
-    print(f"Chemin via Glouton : {chemin_glouton}")
-    
-    return chemin_dijkstra
