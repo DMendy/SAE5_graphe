@@ -66,6 +66,18 @@ def algorithme_glouton(graphe, source, objectif, heuristique):
     print(f"Objectif '{objectif}' atteint!")
     return chemin
 
+def a_star(graphe, source, objectif, heuristique):
+    chemin_dijkstra = dijkstra(graphe, source, objectif)
+    if chemin_dijkstra is None:
+        print("A* : Le chemin via Dijkstra n'a pas été trouvé.")
+        return None
+
+    chemin_glouton = algorithme_glouton(graphe, source, objectif, heuristique)
+    
+    print(f"Chemin via Dijkstra : {chemin_dijkstra}")
+    print(f"Chemin via Glouton : {chemin_glouton}")
+    
+    return chemin_dijkstra
 
 def bfs_iteratif(graphe, source):
     visites = set()
