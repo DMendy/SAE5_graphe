@@ -71,7 +71,13 @@ class Grillage:
                 
                 self.canvas.tag_bind(id_case, "<Button-1>", 
                                     lambda event, item_id=id_case: self.changer_couleur(item_id))
-        
+        self.canvas.bind("<B1-Motion>", self.on_drag)
+
+    def on_drag(self, event):
+        # Trouve l'élément sous le curseur pendant le mouvement
+        item = self.canvas.find_closest(event.x, event.y)
+        if item:
+            self.changer_couleur(item[0])
 
 
     def changer_mode(self, mode):
