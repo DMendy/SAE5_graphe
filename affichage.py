@@ -47,14 +47,14 @@ class Grillage:
         self.bouton_white = tk.Button(self.toolbar, text="Effacer", command=lambda: self.changer_mode("white"))
         self.bouton_white.grid(row=0, column=4, padx=10, pady=10)
 
-        self.bouton_reset = tk.Button(self.toolbar, text="Reset", command=lambda: self.reset())
-        self.bouton_reset.grid(row=0, column=5, padx=10, pady=10)
-
         self.actionbar = tk.Frame(root)
         self.actionbar.grid(row=1, column=1, pady=5)
 
-        self.bouton_dijkstra = tk.Button(self.toolbar, text="Dijkstra", command=self.executer_dijkstra)
-        self.bouton_dijkstra.grid(row=0, column=6, padx=10)
+        self.bouton_reset = tk.Button(self.actionbar, text="Reset", command=lambda: self.reset())
+        self.bouton_reset.grid(row=1, column=0, padx=10, pady=10)
+
+        self.bouton_dijkstra = tk.Button(self.actionbar, text="Dijkstra", command=self.executer_dijkstra)
+        self.bouton_dijkstra.grid(row=0, column=0, padx=10)
 
 
     
