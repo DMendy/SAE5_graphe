@@ -15,11 +15,11 @@ class Grillage:
         self.toolbar = tk.Frame(root)
         self.toolbar.grid(row=0, column=0, pady=5)
 
-        self.rows = 40
-        self.size = self.HEIGHT//self.rows
+        self.rows = 20
+        self.size = self.HEIGHT//(self.rows*2)
         
+        self.dico_hexa,self.dico_coord = {},{}
         
-        self.hexagones = []  # Liste des héxagones
 
         self.dessiner_grille()
 
@@ -86,15 +86,21 @@ class Grillage:
                 y = row * vertical_spacing
                 
                 id_case = self.draw_hexagon(x, y, self.size)
-                self.hexagones.append(id_case)
-                
+                self.dico_hexa[(row,col)] = id_case
+                self.dico_coord[id_case] = (row,col)
                 self.canvas.tag_bind(id_case, "<Button-1>", 
                                     lambda event, item_id=id_case: self.changer_couleur(item_id))
         self.canvas.bind("<B1-Motion>", self.on_drag)
-        for hexa in self.hexagones:
+        
+        
+
+        for hexa in list(self.dico_coord.keys()):
             x1,y1,x2,y2 = self.canvas.bbox(hexa)
             if (x1 < 0 or y1 < 0 or x2 > self.WIDTH or y2 > self.HEIGHT):
                 self.canvas.delete(hexa)
+                del self.dico_hexa[self.dico_coord[hexa]]
+                del self.dico_coord[hexa]
+
         
 
 
@@ -118,13 +124,16 @@ class Grillage:
             if self.mode == "green" : 
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
+                self.zone_text.insert("end",f"Ajout de la maison en {item_id} {self.dico_coord[item_id]}\n")
             elif self.mode == "red" : 
                 self.canvas.itemconfig(self.idEcole, fill="white")
                 self.idEcole = item_id
+                self.zone_text.insert("end",f"Ajout de l'école en {item_id}\n")
             self.canvas.itemconfig(item_id, fill=self.mode)
+            
     def reset (self):
         self.changer_mode("white")
-        for hexa in self.hexagones:
+        for hexa in self.dico_coord.keys():
             self.canvas.itemconfig(hexa, fill=self.mode)
             
     def generer_graphe(self):
