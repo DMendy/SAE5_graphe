@@ -8,7 +8,7 @@ class Grillage:
         self.root = root
         self.HEIGHT = 800
         self.WIDTH = 800
-        self.canvas = tk.Canvas(root, width=self.WIDTH, height=self.HEIGHT, bg="white")
+        self.canvas = tk.Canvas(root, width=self.WIDTH, height=self.HEIGHT)
         self.canvas.grid(row=1, column=0, padx=10, pady=10)
 
 
@@ -47,9 +47,14 @@ class Grillage:
         self.bouton_white = tk.Button(self.toolbar, text="Effacer", command=lambda: self.changer_mode("white"))
         self.bouton_white.grid(row=0, column=4, padx=10, pady=10)
 
+        self.bouton_reset = tk.Button(self.toolbar, text="Reset", command=lambda: self.reset())
+        self.bouton_reset.grid(row=0, column=5, padx=10, pady=10)
+
+        self.actionbar = tk.Frame(root)
+        self.actionbar.grid(row=1, column=1, pady=5)
 
         self.bouton_dijkstra = tk.Button(self.toolbar, text="Dijkstra", command=self.executer_dijkstra)
-        self.bouton_dijkstra.grid(row=0, column=5, padx=10)
+        self.bouton_dijkstra.grid(row=0, column=6, padx=10)
 
 
     
@@ -68,10 +73,9 @@ class Grillage:
         # Création de la grille
         horizontal_spacing = math.sqrt(3) * self.size
         vertical_spacing = 1.5 * self.size 
-
         for row in range(self.rows):
             for col in range(self.rows):
-                x = col * horizontal_spacing
+                x = col * horizontal_spacing+5
                 
                 # Décalage horizontal pour les lignes impaires
                 if row % 2 == 1:
@@ -85,6 +89,12 @@ class Grillage:
                 self.canvas.tag_bind(id_case, "<Button-1>", 
                                     lambda event, item_id=id_case: self.changer_couleur(item_id))
         self.canvas.bind("<B1-Motion>", self.on_drag)
+        for hexa in self.hexagones:
+            x1,y1,x2,y2 = self.canvas.bbox(hexa)
+            if (x1 < 0 or y1 < 0 or x2 > self.WIDTH or y2 > self.HEIGHT):
+                self.canvas.delete(hexa)
+        
+
 
     def on_drag(self, event):
         # Trouve l'élément sous le curseur pendant le mouvement
@@ -110,7 +120,11 @@ class Grillage:
                 self.canvas.itemconfig(self.idEcole, fill="white")
                 self.idEcole = item_id
             self.canvas.itemconfig(item_id, fill=self.mode)
-
+    def reset (self):
+        self.changer_mode("white")
+        for hexa in self.hexagones:
+            self.canvas.itemconfig(hexa, fill=self.mode)
+            
     def generer_graphe(self):
         graphe = {}
         depart = None
