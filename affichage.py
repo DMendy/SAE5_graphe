@@ -111,6 +111,7 @@ class Grillage:
             voisin = self.dico_hexa.get((row_voisin,col_voisin))
             if voisin:
                 voisins.append(voisin)
+        return voisins
 
 
     def on_drag(self, event):
@@ -131,6 +132,8 @@ class Grillage:
         current_color = self.canvas.itemcget(item_id, "fill")
         if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
             if self.mode == "green" : 
+                voisin = self.voisins(item_id)[0]
+                self.tracer_fleche(item_id,voisin)
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
                 self.zone_text.insert("end",f"Ajout de la maison en {self.dico_coord[item_id]}\n")
@@ -204,3 +207,9 @@ class Grillage:
                         self.canvas.itemconfig(node, fill="yellow")
         else:
             self.zone_text.insert("Il manque un point de départ ou d'arrivée !")
+
+    def tracer_fleche(self,hexa1,hexa2):
+        coords_hexa1,coords_hexa2 = self.canvas.bbox(hexa1),self.canvas.bbox(hexa2)
+        x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
+        x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
+        self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10)
