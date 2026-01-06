@@ -95,4 +95,24 @@ def bfs_iteratif(graphe, source):
                 file.append(voisin)
 
 
+def bellman_ford(graphe, source):
+    distances = {sommet: float('inf') for sommet in graphe}
+    distances[source] = 0
 
+    for _ in range(len(graphe) - 1):
+        modifie = False
+        for u in graphe:
+            for v, poids in graphe[u]:
+                if distances[u] != float('inf') and distances[u] + poids < distances[v]:
+                    distances[v] = distances[u] + poids
+                    modifie = True
+        if not modifie:
+            break
+
+    # Si cycle négatif
+    for u in graphe:
+        for v, poids in graphe[u]:
+            if distances[u] != float('inf') and distances[u] + poids < distances[v]:
+                raise ValueError("Cycle de poids négatif détecté")
+
+    return distances
