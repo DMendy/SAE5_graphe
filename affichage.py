@@ -56,6 +56,8 @@ class Grillage:
         self.bouton_dijkstra = tk.Button(self.actionbar, text="Dijkstra", command=self.executer_dijkstra)
         self.bouton_dijkstra.grid(row=0, column=0, padx=10)
 
+        self.zone_text = tk.Text(self.actionbar,height=15, width=40)
+        self.zone_text.grid(row=2,column=0,pady=10,padx=10)
 
     
     def draw_hexagon(self, x, y, size):
@@ -183,4 +185,4 @@ class Grillage:
                     if node != start and node != end:
                         self.canvas.itemconfig(node, fill="yellow")
         else:
-            print("Il manque un point de départ ou d'arrivée !")
+            self.zone_text.insert("Il manque un point de départ ou d'arrivée !")
