@@ -26,12 +26,13 @@ class Grillage:
         self.mode = "white"  # Mode par défaut : couleur des carrés
 
         # Ajout des boutons
+        self.idMaison, self.idEcole = None,None
 
-        self.bouton_green = tk.Button(self.toolbar, text="Départ", command=lambda: self.changer_mode("green"))
+        self.bouton_green = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("green"))
         self.bouton_green.grid(row=0, column=0, padx=10, pady=10)
 
 
-        self.bouton_red = tk.Button(self.toolbar, text="Objectif", command=lambda: self.changer_mode("red"))
+        self.bouton_red = tk.Button(self.toolbar, text="École", command=lambda: self.changer_mode("red"))
         self.bouton_red.grid(row=0, column=1, padx=10, pady=10)
 
 
@@ -39,7 +40,7 @@ class Grillage:
         self.bouton_black.grid(row=0, column=2, padx=10, pady=10)
 
 
-        self.bouton_blue = tk.Button(self.toolbar, text="Rivière", command=lambda: self.changer_mode("cyan"))
+        self.bouton_blue = tk.Button(self.toolbar, text="Rivière", command=lambda: self.changer_mode("blue"))
         self.bouton_blue.grid(row=0, column=3, padx=10, pady=10)
 
 
@@ -87,9 +88,10 @@ class Grillage:
 
     def on_drag(self, event):
         # Trouve l'élément sous le curseur pendant le mouvement
-        item = self.canvas.find_closest(event.x, event.y)
-        if item:
-            self.changer_couleur(item[0])
+        if self.mode not in ["green","red"] : 
+            item = self.canvas.find_closest(event.x, event.y)
+            if item:
+                self.changer_couleur(item[0])
 
 
     def changer_mode(self, mode):
@@ -100,7 +102,13 @@ class Grillage:
     def changer_couleur(self, item_id):
         #Changer la couleur du carré lorsqu'on clique dessus
         current_color = self.canvas.itemcget(item_id, "fill")
-        if current_color != self.mode:
+        if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
+            if self.mode == "green" : 
+                self.canvas.itemconfig(self.idMaison, fill="white")
+                self.idMaison = item_id
+            elif self.mode == "red" : 
+                self.canvas.itemconfig(self.idEcole, fill="white")
+                self.idEcole = item_id
             self.canvas.itemconfig(item_id, fill=self.mode)
 
     def generer_graphe(self):
