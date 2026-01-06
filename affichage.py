@@ -91,8 +91,6 @@ class Grillage:
                 self.canvas.tag_bind(id_case, "<Button-1>", 
                                     lambda event, item_id=id_case: self.changer_couleur(item_id))
         self.canvas.bind("<B1-Motion>", self.on_drag)
-        
-        
 
         for hexa in list(self.dico_coord.keys()):
             x1,y1,x2,y2 = self.canvas.bbox(hexa)
@@ -100,8 +98,19 @@ class Grillage:
                 self.canvas.delete(hexa)
                 del self.dico_hexa[self.dico_coord[hexa]]
                 del self.dico_coord[hexa]
-
         
+    def voisins(self,hexa):
+        voisins = []
+        row,col = self.dico_coord[hexa]
+        if row % 2 == 0:
+            directions = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(1,-1)]
+        else:
+            directions = [(-1,0),(1,0),(0,-1),(0,1),(-1,1),(1,1)]
+        for dx,dy in directions:
+            row_voisin, col_voisin = row+dx,col+dy
+            voisin = self.dico_hexa.get((row_voisin,col_voisin))
+            if voisin:
+                voisins.append(voisin)
 
 
     def on_drag(self, event):
@@ -124,11 +133,11 @@ class Grillage:
             if self.mode == "green" : 
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
-                self.zone_text.insert("end",f"Ajout de la maison en {item_id} {self.dico_coord[item_id]}\n")
+                self.zone_text.insert("end",f"Ajout de la maison en {self.dico_coord[item_id]}\n")
             elif self.mode == "red" : 
                 self.canvas.itemconfig(self.idEcole, fill="white")
                 self.idEcole = item_id
-                self.zone_text.insert("end",f"Ajout de l'école en {item_id}\n")
+                self.zone_text.insert("end",f"Ajout de l'école en {self.dico_coord[item_id]}\n")
             self.canvas.itemconfig(item_id, fill=self.mode)
             
     def reset (self):
