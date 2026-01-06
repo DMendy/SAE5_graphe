@@ -25,25 +25,32 @@ class Grillage:
 
         self.mode = "white"  # Mode par défaut : couleur des carrés
 
-        # Ajouter des boutons pour modifier la couleur des carrés
-        self.bouton_black = tk.Button(self.toolbar, text="Bloqué", command=lambda: self.changer_mode("black"))
-        self.bouton_black.grid(row=0, column=0, padx=10, pady=10)
-
-
-        self.bouton_white = tk.Button(self.toolbar, text="Clear", command=lambda: self.changer_mode("white"))
-        self.bouton_white.grid(row=0, column=2, padx=10, pady=10)
-
+        # Ajout des boutons
 
         self.bouton_green = tk.Button(self.toolbar, text="Départ", command=lambda: self.changer_mode("green"))
-        self.bouton_green.grid(row=0, column=1, padx=10, pady=10)
+        self.bouton_green.grid(row=0, column=0, padx=10, pady=10)
 
 
         self.bouton_red = tk.Button(self.toolbar, text="Objectif", command=lambda: self.changer_mode("red"))
-        self.bouton_red.grid(row=0, column=3, padx=10, pady=10)
+        self.bouton_red.grid(row=0, column=1, padx=10, pady=10)
 
-        # Dans self.toolbar
-        self.bouton_dijkstra = tk.Button(self.toolbar, text="Lancer Dijkstra", command=self.executer_dijkstra)
-        self.bouton_dijkstra.grid(row=0, column=4, padx=10)
+
+        self.bouton_black = tk.Button(self.toolbar, text="Placer un mur", command=lambda: self.changer_mode("black"))
+        self.bouton_black.grid(row=0, column=2, padx=10, pady=10)
+
+
+        self.bouton_blue = tk.Button(self.toolbar, text="Rivière", command=lambda: self.changer_mode("cyan"))
+        self.bouton_blue.grid(row=0, column=3, padx=10, pady=10)
+
+
+        self.bouton_white = tk.Button(self.toolbar, text="Effacer", command=lambda: self.changer_mode("white"))
+        self.bouton_white.grid(row=0, column=4, padx=10, pady=10)
+
+
+        self.bouton_dijkstra = tk.Button(self.toolbar, text="Dijkstra", command=self.executer_dijkstra)
+        self.bouton_dijkstra.grid(row=0, column=5, padx=10)
+
+
     
     def draw_hexagon(self, x, y, size):
         points = []
@@ -123,7 +130,8 @@ class Grillage:
 
             for potential in all_items:
                 if potential == item: continue
-                if self.canvas.itemcget(potential, "fill") == "black": continue
+                couleur_potentielle = self.canvas.itemcget(potential, "fill")
+                if couleur_potentielle == "black": continue
 
                 coords_p = self.canvas.coords(potential)
                 px = sum(coords_p[0::2]) / 6
@@ -132,7 +140,10 @@ class Grillage:
                 dist = math.sqrt((center_x - px) ** 2 + (center_y - py) ** 2)
                 if dist < seuil:
                     # On ajoute le voisin avec un poids par défaut de 1
-                    voisins.append((potential, 1))
+                    poids = 1
+                    if couleur_potentielle == "blue":
+                        poids = 4
+                    voisins.append((potential, poids))
 
             graphe[item] = voisins
 
