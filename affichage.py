@@ -231,7 +231,7 @@ class Grillage:
 
             return int(max(abs(z1-z2),abs(w1-w2),abs(x1-x2)))
     def get_couleur(self,hexa):
-        return self.get_couleur(hexa)
+        return self.canvas.itemcget(hexa)
     
     def get_cout(self,hexa):
         couleur = self.get_couleur(hexa)
