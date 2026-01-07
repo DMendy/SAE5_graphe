@@ -113,9 +113,6 @@ def dijkstra_iteratif(graphe, source, objectif):
     print(f"Objectif '{objectif}' inaccessible.")
     return None
 
-def _dijkstra_poids(grillage, node):
-    return 1 if grillage.canvas.itemcget(node, "fill") != "blue" else 5
-
 
 def _dijkstra_choisir(distances, a_traiter):
     courant = min(a_traiter, key=lambda s: distances[s])
@@ -138,12 +135,8 @@ def _dijkstra_afficher(grillage, chemin, cout_total):
         "end",
         f"Arrivé à l'école en {cout_total} minutes\n"
     )
-
-    # tracage des flèches du chemin final
-    for i in range(len(chemin) - 1):
-        fleche = grillage.tracer_fleche(chemin[i], chemin[i+1])
-        grillage.canvas.itemconfig(fleche, fill="yellow")
-
+    for node in chemin:
+        grillage.canvas.itemconfig(node, fill="yellow")
 
 
 def dijkstra(grillage):
