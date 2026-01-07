@@ -33,6 +33,9 @@ Chaque algorithme utilise une stratégie différente pour explorer la carte. Les
 
 4. **L'algorithme glouton** : Il ne regarde que sa boussole. À chaque intersection, il choisit l'hexagone qui le rapproche physiquement de l'école, même s'il s'agit d'un cul-de-sac ou d'une rivière profonde.
 
+<img width="1169" height="730" alt="image" src="https://github.com/user-attachments/assets/f9dedb5d-bc2e-4100-9873-58fc3347f6cd" />
+*Aperçu du parcours Glouton : l'élève suit sa boussole et fonce vers l'école en ignorant le coût de la rivière.*
+
     
 
 ---
