@@ -139,7 +139,7 @@ class Grillage:
         #Changer la couleur du carré lorsqu'on clique dessus
         current_color = self.canvas.itemcget(item_id, "fill")
         if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
-            if self.mode == "green" : 
+            if self.mode == "green" :
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
                 self.zone_text.insert("end",f"Ajout de la maison en {self.dico_coord[item_id]}\n")
@@ -229,3 +229,14 @@ class Grillage:
             x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
             x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
             return self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10,tags="fleche")
+    
+    def get_dist(self,hexa1,hexa2):
+        if hexa1 and hexa2:
+            x1,y1 = self.dico_coord[hexa1]
+            x2,y2 = self.dico_coord[hexa2]
+            
+            z1 = y1-(x1//2)
+            z2 = y2-(x2//2)
+            w1,w2 = -z1-x1,-z2-x2
+
+            return int(max(abs(z1-z2),abs(w1-w2),abs(x1-x2)))
