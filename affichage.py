@@ -161,7 +161,8 @@ class Grillage:
         self.canvas.itemconfig(self.idEcole, fill="red")
         #On supprime les flèches
         self.canvas.delete("fleche")
-            
+        #On réinitialise la zone de texte
+        self.zone_text.delete("1.0","end")            
     def generer_graphe(self):
         graphe = {}
         depart = None
