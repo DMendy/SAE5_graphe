@@ -48,7 +48,7 @@ def dfs(grillage):
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
 
-def dijkstra(graphe, source, objectif):
+def dijkstra_iteratif(graphe, source, objectif):
     distances = {sommet: float('inf') for sommet in graphe}
     distances[source] = 0
     precedents = {source: None}
@@ -73,11 +73,72 @@ def dijkstra(graphe, source, objectif):
                 precedents[voisin] = noeud_courant
         
         non_visites.remove(noeud_courant)
-    
+
     print(f"Objectif '{objectif}' inaccessible.")
     return None
 
-def algorithme_glouton(graphe, source, objectif, heuristique):
+def dijkstra(grillage):
+    grillage.canvas.delete("fleche")
+
+    source, objectif = grillage.idMaison, grillage.idEcole
+
+    distances = {source: 0}
+    precedents = {source: None}
+
+    a_traiter = [source]
+    visites = set()
+
+    while a_traiter:
+        grillage.canvas.update()
+
+        courant = min(a_traiter, key=lambda s: distances[s])
+        a_traiter.remove(courant)
+
+        if courant in visites:
+            continue
+        visites.add(courant)
+
+        sleep(0.02)
+
+        if courant == objectif:
+            break
+
+        voisins = grillage.voisins(courant)
+        random.shuffle(voisins)
+
+        for voisin in voisins:
+            poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+            nouvelle_distance = distances[courant] + poids
+
+            if nouvelle_distance < distances.get(voisin, float("inf")):
+                distances[voisin] = nouvelle_distance
+                precedents[voisin] = courant
+                a_traiter.append(voisin)
+                grillage.tracer_fleche(courant, voisin)
+
+    if objectif not in distances:
+        grillage.zone_text.insert("end", "École inaccessible.\n")
+        return None
+
+    chemin = []
+    cur = objectif
+    while cur is not None:
+        chemin.append(cur)
+        cur = precedents[cur]
+    chemin.reverse()
+
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {distances[objectif]} minutes\n"
+    )
+
+    for s in chemin:
+        grillage.canvas.itemconfig(s, fill="yellow")
+
+    return chemin
+
+
+def methode_gloutonne(graphe, source, objectif, heuristique):
     noeud_courant = source
     chemin = [noeud_courant]
     visites = set()
@@ -99,17 +160,33 @@ def algorithme_glouton(graphe, source, objectif, heuristique):
     return chemin
 
 def a_star(graphe, source, objectif, heuristique):
-    chemin_dijkstra = dijkstra(graphe, source, objectif)
-    if chemin_dijkstra is None:
-        print("A* : Le chemin via Dijkstra n'a pas été trouvé.")
-        return None
+    open_set = {source}
+    closed_set = set()
+    g = {s: float('inf') for s in graphe}
+    g[source] = 0
+    precedents = {source: None}
 
-    chemin_glouton = algorithme_glouton(graphe, source, objectif, heuristique)
-    
-    print(f"Chemin via Dijkstra : {chemin_dijkstra}")
-    print(f"Chemin via Glouton : {chemin_glouton}")
-    
-    return chemin_dijkstra
+    while open_set:
+        courant = min(open_set, key=lambda n: g[n] + heuristique[n])
+        if courant == objectif:
+            chemin = []
+            while courant is not None:
+                chemin.append(courant)
+                courant = precedents[courant]
+            return chemin[::-1]
+
+        open_set.remove(courant)
+        closed_set.add(courant)
+
+        for voisin, cout in graphe[courant]:
+            if voisin in closed_set:
+                continue
+            tentative_g = g[courant] + cout
+            if tentative_g < g[voisin]:
+                g[voisin] = tentative_g
+                precedents[voisin] = courant
+                open_set.add(voisin)
+    return None
 
 def bfs_iteratif(graphe, source):
     visites = set()
