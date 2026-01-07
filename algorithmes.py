@@ -77,7 +77,7 @@ def dijkstra(graphe, source, objectif):
     print(f"Objectif '{objectif}' inaccessible.")
     return None
 
-def algorithme_glouton(graphe, source, objectif, heuristique):
+def methode_gloutonne(graphe, source, objectif, heuristique):
     noeud_courant = source
     chemin = [noeud_courant]
     visites = set()
@@ -99,17 +99,33 @@ def algorithme_glouton(graphe, source, objectif, heuristique):
     return chemin
 
 def a_star(graphe, source, objectif, heuristique):
-    chemin_dijkstra = dijkstra(graphe, source, objectif)
-    if chemin_dijkstra is None:
-        print("A* : Le chemin via Dijkstra n'a pas été trouvé.")
-        return None
+    open_set = {source}
+    closed_set = set()
+    g = {s: float('inf') for s in graphe}
+    g[source] = 0
+    precedents = {source: None}
 
-    chemin_glouton = algorithme_glouton(graphe, source, objectif, heuristique)
-    
-    print(f"Chemin via Dijkstra : {chemin_dijkstra}")
-    print(f"Chemin via Glouton : {chemin_glouton}")
-    
-    return chemin_dijkstra
+    while open_set:
+        courant = min(open_set, key=lambda n: g[n] + heuristique[n])
+        if courant == objectif:
+            chemin = []
+            while courant is not None:
+                chemin.append(courant)
+                courant = precedents[courant]
+            return chemin[::-1]
+
+        open_set.remove(courant)
+        closed_set.add(courant)
+
+        for voisin, cout in graphe[courant]:
+            if voisin in closed_set:
+                continue
+            tentative_g = g[courant] + cout
+            if tentative_g < g[voisin]:
+                g[voisin] = tentative_g
+                precedents[voisin] = courant
+                open_set.add(voisin)
+    return None
 
 def bfs_iteratif(graphe, source):
     visites = set()
