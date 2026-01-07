@@ -1,4 +1,5 @@
 from collections import deque
+from time import sleep
 
 def dfs_iteratif(graphe, source):
     visites = set()
@@ -14,7 +15,28 @@ def dfs_iteratif(graphe, source):
             for voisin, poids in reversed(graphe[sommet]):
                 if voisin not in visites:
                     pile.append((voisin, cout + poids))
-                    
+
+def dfs(grillage):
+    visites = []
+    source,objectif = grillage.idMaison,grillage.idEcole
+    pile = [(source, 0,None)]
+    while pile:
+        grillage.canvas.update()
+        sleep(0.05)
+        sommet, cout,parent = pile.pop()
+        grillage.tracer_fleche(parent,sommet)
+        voisins = grillage.voisins(sommet)
+        if sommet == objectif:
+            grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
+            break
+        if sommet not in visites:
+            visites.append(sommet)
+
+            for voisin in voisins:
+                poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+                if voisin not in visites:
+                    pile.append((voisin, cout + poids,sommet))
+
 
 def dijkstra(graphe, source, objectif):
     distances = {sommet: float('inf') for sommet in graphe}
