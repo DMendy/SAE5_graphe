@@ -77,6 +77,35 @@ def dijkstra_iteratif(graphe, source, objectif):
     print(f"Objectif '{objectif}' inaccessible.")
     return None
 
+def _dijkstra_poids(grillage, node):
+    return 1 if grillage.canvas.itemcget(node, "fill") != "blue" else 5
+
+
+def _dijkstra_choisir(distances, a_traiter):
+    courant = min(a_traiter, key=lambda s: distances[s])
+    a_traiter.remove(courant)
+    return courant
+
+
+def _dijkstra_reconstruire(precedents, objectif):
+    chemin = []
+    cur = objectif
+    while cur is not None:
+        chemin.append(cur)
+        cur = precedents[cur]
+    chemin.reverse()
+    return chemin
+
+
+def _dijkstra_afficher(grillage, chemin, cout_total):
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {cout_total} minutes\n"
+    )
+    for node in chemin:
+        grillage.canvas.itemconfig(node, fill="yellow")
+
+
 def dijkstra(grillage):
     grillage.canvas.delete("fleche")
 
@@ -91,9 +120,7 @@ def dijkstra(grillage):
     while a_traiter:
         grillage.canvas.update()
 
-        courant = min(a_traiter, key=lambda s: distances[s])
-        a_traiter.remove(courant)
-
+        courant = _dijkstra_choisir(distances, a_traiter)
         if courant in visites:
             continue
         visites.add(courant)
@@ -107,7 +134,7 @@ def dijkstra(grillage):
         random.shuffle(voisins)
 
         for voisin in voisins:
-            poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+            poids = _dijkstra_poids(grillage, voisin)
             nouvelle_distance = distances[courant] + poids
 
             if nouvelle_distance < distances.get(voisin, float("inf")):
@@ -120,25 +147,12 @@ def dijkstra(grillage):
         grillage.zone_text.insert("end", "École inaccessible.\n")
         return None
 
-    chemin = []
-    cur = objectif
-    while cur is not None:
-        chemin.append(cur)
-        cur = precedents[cur]
-    chemin.reverse()
-
-    grillage.zone_text.insert(
-        "end",
-        f"Arrivé à l'école en {distances[objectif]} minutes\n"
-    )
-
-    for s in chemin:
-        grillage.canvas.itemconfig(s, fill="yellow")
-
+    chemin = _dijkstra_reconstruire(precedents, objectif)
+    _dijkstra_afficher(grillage, chemin, distances[objectif])
     return chemin
 
 
-def methode_gloutonne(graphe, source, objectif, heuristique):
+def methode_gloutonne_iteratif(graphe, source, objectif, heuristique):
     noeud_courant = source
     chemin = [noeud_courant]
     visites = set()
