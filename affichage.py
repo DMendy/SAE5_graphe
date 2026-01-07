@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import algorithmes as algo
 
 
 
@@ -21,12 +22,12 @@ class Grillage:
         self.dico_hexa,self.dico_coord = {},{}
         
 
+        self.idMaison, self.idEcole = None,None
         self.dessiner_grille()
 
         self.mode = "white"  # Mode par défaut : couleur des carrés
 
         # Ajout des boutons
-        self.idMaison, self.idEcole = None,None
 
         self.bouton_green = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("green"))
         self.bouton_green.grid(row=0, column=0, padx=10, pady=10)
@@ -57,8 +58,10 @@ class Grillage:
         self.bouton_dijkstra.grid(row=0, column=0, padx=10)
 
         self.zone_text = tk.Text(self.actionbar,height=15, width=40)
-        self.zone_text.grid(row=2,column=0,pady=10,padx=10)
+        self.zone_text.grid(row=3,column=0,pady=10,padx=10)
 
+        self.bouton_dfs = tk.Button(self.actionbar, text="Parcours en largeur", command=lambda : algo.dfs(self))
+        self.bouton_dfs.grid(row=2, column=0, padx=10)
     
     def draw_hexagon(self, x, y, size):
         points = []
@@ -98,6 +101,11 @@ class Grillage:
                 self.canvas.delete(hexa)
                 del self.dico_hexa[self.dico_coord[hexa]]
                 del self.dico_coord[hexa]
+        
+        #On initialise une maison et une école de base
+        self.idEcole,self.idMaison = self.dico_hexa[(19,19)],self.dico_hexa[(1,0)]
+        self.canvas.itemconfig(self.idMaison, fill="green")
+        self.canvas.itemconfig(self.idEcole, fill="red")
         
     def voisins(self,hexa):
         voisins = []
@@ -142,9 +150,17 @@ class Grillage:
             self.canvas.itemconfig(item_id, fill=self.mode)
             
     def reset (self):
+        #On réinitialise le mode
         self.changer_mode("white")
+        #On remet tous les hexagones en blanc
         for hexa in self.dico_coord.keys():
             self.canvas.itemconfig(hexa, fill=self.mode)
+        #On réinitialise la maison et l'école
+        self.idEcole,self.idMaison = self.dico_hexa[(19,19)],self.dico_hexa[(1,0)]
+        self.canvas.itemconfig(self.idMaison, fill="green")
+        self.canvas.itemconfig(self.idEcole, fill="red")
+        #On supprime les flèches
+        self.canvas.delete("fleche")
             
     def generer_graphe(self):
         graphe = {}
@@ -207,7 +223,8 @@ class Grillage:
             self.zone_text.insert("Il manque un point de départ ou d'arrivée !")
 
     def tracer_fleche(self,hexa1,hexa2):
-        coords_hexa1,coords_hexa2 = self.canvas.bbox(hexa1),self.canvas.bbox(hexa2)
-        x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
-        x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
-        self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10)
+        if hexa1 and hexa2 : 
+            coords_hexa1,coords_hexa2 = self.canvas.bbox(hexa1),self.canvas.bbox(hexa2)
+            x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
+            x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
+            self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10,tags="fleche")
