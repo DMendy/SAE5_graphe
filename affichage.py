@@ -117,7 +117,7 @@ class Grillage:
         for dx,dy in directions:
             row_voisin, col_voisin = row+dx,col+dy
             voisin = self.dico_hexa.get((row_voisin,col_voisin))
-            if voisin and self.canvas.itemcget(voisin, "fill") != "black":
+            if voisin and self.get_couleur(voisin) != "black":
                 voisins.append(voisin)
         return voisins
 
@@ -137,7 +137,7 @@ class Grillage:
 
     def changer_couleur(self, item_id):
         #Changer la couleur du carré lorsqu'on clique dessus
-        current_color = self.canvas.itemcget(item_id, "fill")
+        current_color = self.get_couleur(item_id)
         if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
             if self.mode == "green" :
                 self.canvas.itemconfig(self.idMaison, fill="white")
@@ -174,7 +174,7 @@ class Grillage:
         # 1. Identifier les rôles de chaque hexagone
         all_items = self.canvas.find_all()
         for item in all_items:
-            color = self.canvas.itemcget(item, "fill")
+            color = self.get_couleur(item)
             if color == "black": continue  # On ignore les murs
 
             if color == "green": depart = item
@@ -191,7 +191,7 @@ class Grillage:
 
             for potential in all_items:
                 if potential == item: continue
-                couleur_potentielle = self.canvas.itemcget(potential, "fill")
+                couleur_potentielle = self.get_couleur(potential)
                 if couleur_potentielle == "black": continue
 
                 coords_p = self.canvas.coords(potential)
@@ -230,3 +230,5 @@ class Grillage:
             w1,w2 = -z1-x1,-z2-x2
 
             return int(max(abs(z1-z2),abs(w1-w2),abs(x1-x2)))
+    def get_couleur(self,hexa):
+        return self.get_couleur(hexa)
