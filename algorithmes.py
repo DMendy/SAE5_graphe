@@ -19,23 +19,31 @@ def dfs_iteratif(graphe, source):
 def dfs(grillage):
     visites = []
     source,objectif = grillage.idMaison,grillage.idEcole
-    pile = [(source, 0,None)]
+    pile = [(source, 0,None,[])]
     while pile:
         grillage.canvas.update()
-        sleep(0.05)
-        sommet, cout,parent = pile.pop()
-        grillage.tracer_fleche(parent,sommet)
-        voisins = grillage.voisins(sommet)
-        if sommet == objectif:
-            grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
-            break
+        sommet, cout,parent,chemin = pile.pop()
         if sommet not in visites:
+            sleep(0.05)
             visites.append(sommet)
+            voisins = grillage.voisins(sommet)
 
+            fleche = grillage.tracer_fleche(parent,sommet)
+            chemin.append(fleche)
+
+            if sommet == objectif:
+                chemin_final = chemin[:]
+                cout_final = cout
+                grillage.zone_text.insert("end",chemin_final)
+            
             for voisin in voisins:
                 poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
                 if voisin not in visites:
-                    pile.append((voisin, cout + poids,sommet))
+                    pile.append((voisin, cout + poids,sommet,chemin[:]))
+
+    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+    for sommet in chemin_final:
+        grillage.canvas.itemconfig(sommet, fill="yellow")
 
 
 def dijkstra(graphe, source, objectif):

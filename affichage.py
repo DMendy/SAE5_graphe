@@ -227,4 +227,4 @@ class Grillage:
             coords_hexa1,coords_hexa2 = self.canvas.bbox(hexa1),self.canvas.bbox(hexa2)
             x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
             x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
-            self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10,tags="fleche")
+            return self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="grey",width=10,tags="fleche")
