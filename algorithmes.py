@@ -19,6 +19,7 @@ def dfs_iteratif(graphe, source):
 
 def dfs(grillage):
     visites = []
+    grillage.canvas.delete("fleche")
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
     while pile:
