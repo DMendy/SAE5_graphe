@@ -19,6 +19,8 @@ def dfs_iteratif(graphe, source):
 
 def dfs(grillage):
     visites = []
+    chemin_final=[]
+    cout_final = 0
     grillage.canvas.delete("fleche")
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
@@ -39,7 +41,7 @@ def dfs(grillage):
             
             random.shuffle(voisins)
             for voisin in voisins:
-                poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+                poids = grillage.get_cout(voisin)
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
 
@@ -47,6 +49,40 @@ def dfs(grillage):
     for sommet in chemin_final:
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
+def bfs(grillage):
+    visites = []
+    chemin_final=[]
+    cout_final = 0
+    grillage.canvas.delete("fleche")
+    source,objectif = grillage.idMaison,grillage.idEcole
+    pile = [(source, 0,None,[])]
+    cout_commun = 0
+    while pile:
+        grillage.canvas.update()
+        sommet, cout,parent,chemin = pile.pop(0)
+        if sommet not in visites:
+            if cout_commun != cout:
+                cout_commun = cout
+                sleep(0.05)
+            visites.append(sommet)
+            voisins = grillage.voisins(sommet)
+
+            fleche = grillage.tracer_fleche(parent,sommet)
+            chemin.append(fleche)
+
+            if sommet == objectif:
+                chemin_final = chemin[:]
+                cout_final = cout
+            
+            random.shuffle(voisins)
+            for voisin in voisins:
+                poids = grillage.get_cout(voisin)
+                if voisin not in visites:
+                    pile.append((voisin, cout + poids,sommet,chemin[:]))
+
+    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+    for sommet in chemin_final:
+        grillage.canvas.itemconfig(sommet, fill="yellow")
 
 def dijkstra_iteratif(graphe, source, objectif):
     distances = {sommet: float('inf') for sommet in graphe}
@@ -199,7 +235,7 @@ def glouton(grillage):
         grillage.tracer_fleche(source,best_voisin)
         source = best_voisin
         best_voisin = None
-        
+
     grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
     for sommet in grillage.canvas.find_withtag("fleche"):
         grillage.canvas.itemconfig(sommet, fill="yellow")
