@@ -109,7 +109,7 @@ class Grillage:
         for dx,dy in directions:
             row_voisin, col_voisin = row+dx,col+dy
             voisin = self.dico_hexa.get((row_voisin,col_voisin))
-            if voisin:
+            if voisin and self.canvas.itemcget(voisin, "fill") != "black":
                 voisins.append(voisin)
         return voisins
 
@@ -132,8 +132,6 @@ class Grillage:
         current_color = self.canvas.itemcget(item_id, "fill")
         if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
             if self.mode == "green" : 
-                voisin = self.voisins(item_id)[0]
-                self.tracer_fleche(item_id,voisin)
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
                 self.zone_text.insert("end",f"Ajout de la maison en {self.dico_coord[item_id]}\n")
