@@ -159,6 +159,37 @@ def methode_gloutonne(graphe, source, objectif, heuristique):
     print(f"Objectif '{objectif}' atteint!")
     return chemin
 
+def glouton(grillage):
+    visites=[]
+    grillage.canvas.delete("fleche")
+    source,objectif = grillage.idMaison,grillage.idEcole
+    cout = 0
+    best_voisin = None
+    while source != objectif :
+        visites.append(source)
+        grillage.canvas.update()
+        sleep(0.05)
+        voisins = grillage.voisins(source)
+        min = float('inf')
+
+        for voisin in voisins :
+            if voisin not in visites and grillage.get_dist(voisin,objectif) <min: 
+                min = grillage.get_dist(voisin,objectif) 
+                best_voisin = voisin
+
+        if not best_voisin:#Si aucun voisin non visité
+            grillage.zone_text.insert("end",f"Je n'arrive pas à aller à l'école\n")
+            return
+        
+        cout+=grillage.get_cout(best_voisin)
+        grillage.tracer_fleche(source,best_voisin)
+        source = best_voisin
+        best_voisin = None
+        
+    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
+    for sommet in grillage.canvas.find_withtag("fleche"):
+        grillage.canvas.itemconfig(sommet, fill="yellow")
+
 def a_star(graphe, source, objectif, heuristique):
     open_set = {source}
     closed_set = set()
