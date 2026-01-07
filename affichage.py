@@ -162,7 +162,8 @@ class Grillage:
         #On supprime les flèches
         self.canvas.delete("fleche")
         #On réinitialise la zone de texte
-        self.zone_text.delete("1.0","end")            
+        self.zone_text.delete("1.0","end")  
+                  
     def generer_graphe(self):
         graphe = {}
         depart = None
@@ -210,18 +211,7 @@ class Grillage:
         return graphe, depart, objectif
 
     def executer_dijkstra(self):
-        from algorithmes import dijkstra  # Importez vos fonctions
-
-        graphe, start, end = self.generer_graphe()
-
-        if start and end:
-            chemin = dijkstra(graphe, start, end)
-            if chemin:
-                for node in chemin:
-                    if node != start and node != end:
-                        self.canvas.itemconfig(node, fill="yellow")
-        else:
-            self.zone_text.insert("Il manque un point de départ ou d'arrivée !")
+        algo.dijkstra(self)
 
     def tracer_fleche(self,hexa1,hexa2):
         if hexa1 and hexa2 : 

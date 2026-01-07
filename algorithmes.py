@@ -48,7 +48,7 @@ def dfs(grillage):
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
 
-def dijkstra(graphe, source, objectif):
+def dijkstra_iteratif(graphe, source, objectif):
     distances = {sommet: float('inf') for sommet in graphe}
     distances[source] = 0
     precedents = {source: None}
@@ -73,9 +73,70 @@ def dijkstra(graphe, source, objectif):
                 precedents[voisin] = noeud_courant
         
         non_visites.remove(noeud_courant)
-    
+
     print(f"Objectif '{objectif}' inaccessible.")
     return None
+
+def dijkstra(grillage):
+    grillage.canvas.delete("fleche")
+
+    source, objectif = grillage.idMaison, grillage.idEcole
+
+    distances = {source: 0}
+    precedents = {source: None}
+
+    a_traiter = [source]
+    visites = set()
+
+    while a_traiter:
+        grillage.canvas.update()
+
+        courant = min(a_traiter, key=lambda s: distances[s])
+        a_traiter.remove(courant)
+
+        if courant in visites:
+            continue
+        visites.add(courant)
+
+        sleep(0.02)
+
+        if courant == objectif:
+            break
+
+        voisins = grillage.voisins(courant)
+        random.shuffle(voisins)
+
+        for voisin in voisins:
+            poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+            nouvelle_distance = distances[courant] + poids
+
+            if nouvelle_distance < distances.get(voisin, float("inf")):
+                distances[voisin] = nouvelle_distance
+                precedents[voisin] = courant
+                a_traiter.append(voisin)
+                grillage.tracer_fleche(courant, voisin)
+
+    if objectif not in distances:
+        grillage.zone_text.insert("end", "École inaccessible.\n")
+        return None
+
+    chemin = []
+    cur = objectif
+    while cur is not None:
+        chemin.append(cur)
+        cur = precedents[cur]
+    chemin.reverse()
+
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {distances[objectif]} minutes\n"
+    )
+
+    for s in chemin:
+        grillage.canvas.itemconfig(s, fill="yellow")
+
+    return chemin
+
 
 def methode_gloutonne(graphe, source, objectif, heuristique):
     noeud_courant = source
