@@ -170,7 +170,7 @@ def dijkstra(grillage):
         random.shuffle(voisins)
 
         for voisin in voisins:
-            poids = _dijkstra_poids(grillage, voisin)
+            poids = grillage.get_cout(voisin)
             nouvelle_distance = distances[courant] + poids
 
             if nouvelle_distance < distances.get(voisin, float("inf")):
