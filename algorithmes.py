@@ -1,5 +1,6 @@
 from collections import deque
 from time import sleep
+import random
 
 def dfs_iteratif(graphe, source):
     visites = set()
@@ -34,8 +35,8 @@ def dfs(grillage):
             if sommet == objectif:
                 chemin_final = chemin[:]
                 cout_final = cout
-                grillage.zone_text.insert("end",chemin_final)
             
+            random.shuffle(voisins)
             for voisin in voisins:
                 poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
                 if voisin not in visites:
