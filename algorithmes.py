@@ -138,8 +138,12 @@ def _dijkstra_afficher(grillage, chemin, cout_total):
         "end",
         f"Arrivé à l'école en {cout_total} minutes\n"
     )
-    for node in chemin:
-        grillage.canvas.itemconfig(node, fill="yellow")
+
+    # tracage des flèches du chemin final
+    for i in range(len(chemin) - 1):
+        fleche = grillage.tracer_fleche(chemin[i], chemin[i+1])
+        grillage.canvas.itemconfig(fleche, fill="yellow")
+
 
 
 def dijkstra(grillage):
