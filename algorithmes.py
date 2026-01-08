@@ -20,7 +20,7 @@ def dfs(grillage):
         grillage.canvas.update()
         sommet, cout,parent,chemin = pile.pop()
         if sommet not in visites:
-            sleep(0.05)
+            sleep(0.005)
             visites.append(sommet)
             voisins = grillage.voisins(sommet)
 
@@ -292,7 +292,7 @@ def bellmanFord(grillage):
                 if cout[sommet] != float('inf') and cout[sommet]+poids<cout[voisin]:
                     cout[voisin] = cout[sommet]+poids
                     grillage.canvas.update()
-                    sleep(0.01)
+                    sleep(0.005)
                     if fleches.get(voisin):
                         grillage.canvas.delete(fleches[voisin][-1])
                     fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin)]
