@@ -3,6 +3,14 @@ from time import sleep
 import random
 
 def dfs(grillage):
+    """Parcours en profondeur (DFS) sur la grille avec animation.
+
+    Args:
+        grillage: Instance de l'interface contenant la grille et le canvas.
+
+    Returns:
+        None.
+    """
     visites = []
     chemin_final=[]
     cout_final = 0
@@ -35,6 +43,14 @@ def dfs(grillage):
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
 def bfs(grillage):
+    """Parcours en largeur (BFS) sur la grille avec animation.
+
+    Args:
+        grillage: Instance de l'interface contenant la grille et le canvas.
+
+    Returns:
+        None.
+    """
     visites = []
     chemin_final=[]
     cout_final = 0
