@@ -97,13 +97,22 @@ def _dijkstra_reconstruire(precedents, objectif):
     return chemin
 
 
-def _dijkstra_afficher(grillage, chemin, cout_total):
+def _dijkstra_fleches(grillage, noeuds):
+    fleches = []
+    for i in range(len(noeuds) - 1):
+        fleche = grillage.tracer_fleche(noeuds[i], noeuds[i + 1])
+        if fleche:
+            fleches.append(fleche)
+    return fleches
+
+
+def _dijkstra_afficher(grillage, fleches, cout_total):
     grillage.zone_text.insert(
         "end",
         f"Arrivé à l'école en {cout_total} minutes\n"
     )
-    for node in chemin:
-        grillage.canvas.itemconfig(node, fill="yellow")
+    for fleche in fleches:
+        grillage.canvas.itemconfig(fleche, fill="yellow")
 
 
 def dijkstra(grillage):
@@ -147,7 +156,8 @@ def dijkstra(grillage):
         grillage.zone_text.insert("end", "École inaccessible.\n")
         return None
 
-    chemin = _dijkstra_reconstruire(precedents, objectif)
+    noeuds = _dijkstra_reconstruire(precedents, objectif)
+    chemin = _dijkstra_fleches(grillage, noeuds)
     _dijkstra_afficher(grillage, chemin, distances[objectif])
     return chemin
 
