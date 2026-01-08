@@ -147,7 +147,7 @@ class Grillage:
         # Trouve l'élément sous le curseur pendant le mouvement
         if self.mode not in ["pink","red"] :
             item = self.canvas.find_closest(event.x, event.y)
-            if item and item not in self.canvas.find_withtag("fleche"):
+            if item and item[0] not in self.canvas.find_withtag("fleche"):
                 self.changer_couleur(item[0])
 
 
