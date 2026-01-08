@@ -311,4 +311,4 @@ def bellmanFord(grillage):
             f"Arrivé à l'école en {cout[grillage.idEcole]} minutes\n"
         )
         for sommet in fleches[grillage.idEcole]:
-            grillage.canvas.itemconfig(sommet, fill="yellow")
+            grillage.canvas.itemconfig(sommet[0], fill="yellow")
