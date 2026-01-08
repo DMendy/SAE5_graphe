@@ -267,7 +267,7 @@ def a_star(grillage):
     )
 
     for fleche in fleches[objectif]:
-        grillage.canvas.itemconfig(fleche, fill="yellow")
+        grillage.canvas.itemconfig(fleche[0], fill="yellow")
 
 
 def bellmanFord(grillage):
