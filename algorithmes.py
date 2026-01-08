@@ -77,27 +77,6 @@ def _dijkstra_choisir(distances, a_traiter):
     return courant
 
 
-def _dijkstra_reconstruire(precedents, objectif):
-    chemin = []
-    cur = objectif
-    while cur is not None:
-        chemin.append(cur)
-        cur = precedents[cur]
-    chemin.reverse()
-    return chemin
-
-
-def _dijkstra_afficher(grillage, chemin, cout_total):
-    grillage.zone_text.insert(
-        "end",
-        f"Arrivé à l'école en {cout_total} minutes\n"
-    )
-    # tracage des flèches du chemin final
-    for i in range(len(chemin) - 1):
-        fleche = grillage.tracer_fleche(chemin[i], chemin[i+1])
-        grillage.canvas.itemconfig(fleche, fill="yellow")
-
-
 def dijkstra(grillage):
     grillage.canvas.delete("fleche")
 
@@ -105,6 +84,7 @@ def dijkstra(grillage):
 
     distances = {source: 0}
     precedents = {source: None}
+    fleches = {sommet : [] for sommet in grillage.dico_coord.keys()}
 
     a_traiter = [source]
     visites = set()
@@ -132,16 +112,19 @@ def dijkstra(grillage):
             if nouvelle_distance < distances.get(voisin, float("inf")):
                 distances[voisin] = nouvelle_distance
                 precedents[voisin] = courant
+                fleches[voisin] = fleches[courant]+[grillage.tracer_fleche(courant,voisin)]
                 a_traiter.append(voisin)
-                grillage.tracer_fleche(courant, voisin)
 
     if objectif not in distances:
         grillage.zone_text.insert("end", "École inaccessible.\n")
         return None
 
-    chemin = _dijkstra_reconstruire(precedents, objectif)
-    _dijkstra_afficher(grillage, chemin, distances[objectif])
-    return chemin
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {distances[objectif]} minutes\n"
+    )
+    for fleche in fleches[objectif]:
+        grillage.canvas.itemconfig(fleche, fill="yellow")
 
 
 def glouton(grillage):
@@ -216,7 +199,6 @@ def bellmanFord(grillage):
     for i in range(len(sommets)-1):
         modification = False
         for sommet in sommets:
-            last = grillage.dico_coord[sommet]
             for voisin in grillage.voisins(sommet):
                 poids = grillage.get_cout(voisin)
                 if tab[sommet] != float('inf') and tab[sommet]+poids<tab[voisin]:
