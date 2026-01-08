@@ -37,10 +37,12 @@ def dfs(grillage):
                 poids = grillage.get_cout(voisin)
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
-
-    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
-    for sommet in chemin_final:
-        grillage.canvas.itemconfig(sommet, fill="yellow")
+    if cout_final== 0:
+        grillage.zone_text.insert("end",f"École inaccessible")
+    else:
+        grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+        for sommet in chemin_final:
+            grillage.canvas.itemconfig(sommet, fill="yellow")
 
 def bfs(grillage):
     """Parcours en largeur (BFS) sur la grille avec animation.
@@ -81,9 +83,12 @@ def bfs(grillage):
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
 
-    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
-    for sommet in chemin_final:
-        grillage.canvas.itemconfig(sommet, fill="yellow")
+    if cout_final== 0:
+        grillage.zone_text.insert("end",f"École inaccessible")
+    else:
+        grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+        for sommet in chemin_final:
+            grillage.canvas.itemconfig(sommet, fill="yellow")
 
 
 
