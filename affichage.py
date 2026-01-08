@@ -29,13 +29,14 @@ class Grillage:
 
         # Ajout des boutons
 
-        self.bouton_green = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("green"))
-        self.bouton_green.grid(row=0, column=0, padx=10, pady=10)
-
+        self.bouton_pink = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("pink"))
+        self.bouton_pink.grid(row=0, column=0, padx=10, pady=10)
 
         self.bouton_red = tk.Button(self.toolbar, text="École", command=lambda: self.changer_mode("red"))
         self.bouton_red.grid(row=0, column=1, padx=10, pady=10)
 
+        self.bouton_forest = tk.Button(self.toolbar, text="Forêt", command=lambda: self.changer_mode("green"))
+        self.bouton_forest.grid(row=0, column=5, padx=10, pady=10)
 
         self.bouton_black = tk.Button(self.toolbar, text="Placer un mur", command=lambda: self.changer_mode("black"))
         self.bouton_black.grid(row=0, column=2, padx=10, pady=10)
@@ -113,7 +114,7 @@ class Grillage:
         
         #On initialise une maison et une école de base
         self.idEcole,self.idMaison = self.dico_hexa[(19,19)],self.dico_hexa[(1,0)]
-        self.canvas.itemconfig(self.idMaison, fill="green")
+        self.canvas.itemconfig(self.idMaison, fill="pink")
         self.canvas.itemconfig(self.idEcole, fill="red")
         
     def voisins(self,hexa):
@@ -133,7 +134,7 @@ class Grillage:
 
     def on_drag(self, event):
         # Trouve l'élément sous le curseur pendant le mouvement
-        if self.mode not in ["green","red"] : 
+        if self.mode not in ["pink","red"] :
             item = self.canvas.find_closest(event.x, event.y)
             if item:
                 self.changer_couleur(item[0])
@@ -147,8 +148,8 @@ class Grillage:
     def changer_couleur(self, item_id):
         #Changer la couleur du carré lorsqu'on clique dessus
         current_color = self.get_couleur(item_id)
-        if current_color != self.mode and not (current_color in ["green","red"] and self.mode!="white"):
-            if self.mode == "green" :
+        if current_color != self.mode and not (current_color in ["pink","red"] and self.mode!="white"):
+            if self.mode == "pink" :
                 self.canvas.itemconfig(self.idMaison, fill="white")
                 self.idMaison = item_id
                 self.zone_text.insert("end",f"Ajout de la maison en {self.dico_coord[item_id]}\n")
@@ -248,6 +249,8 @@ class Grillage:
         couleur = self.get_couleur(hexa)
         if couleur == "white" or couleur=="red":
             return 1
+        elif couleur == "green":
+            return 3
         elif couleur == "blue":
             return 5 
         else : 
