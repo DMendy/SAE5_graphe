@@ -205,24 +205,34 @@ def a_star(graphe, source, objectif, heuristique):
     return None
 
 
-def bellman_ford(graphe, source):
-    distances = {sommet: float('inf') for sommet in graphe}
-    distances[source] = 0
+def bellmanFord(grillage):
+    grillage.canvas.delete("fleche")
 
-    for _ in range(len(graphe) - 1):
-        modifie = False
-        for u in graphe:
-            for v, poids in graphe[u]:
-                if distances[u] != float('inf') and distances[u] + poids < distances[v]:
-                    distances[v] = distances[u] + poids
-                    modifie = True
-        if not modifie:
+    sommets = grillage.dico_coord.keys()
+    tab = {sommet : float('inf') for sommet in sommets }
+    tab[grillage.idMaison] = 0
+
+    fleches = {sommet : [] for sommet in sommets }
+    for i in range(len(sommets)-1):
+        modification = False
+        for sommet in sommets:
+            last = grillage.dico_coord[sommet]
+            for voisin in grillage.voisins(sommet):
+                poids = grillage.get_cout(voisin)
+                if tab[sommet] != float('inf') and tab[sommet]+poids<tab[voisin]:
+                    tab[voisin] = tab[sommet]+poids
+                    grillage.canvas.update()
+                    sleep(0.01)
+                    if fleches.get(voisin):
+                        grillage.canvas.delete(fleches[voisin][-1])
+                    fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin)]
+                    modification = True
+        if not modification:
             break
-
-    # Si cycle négatif
-    for u in graphe:
-        for v, poids in graphe[u]:
-            if distances[u] != float('inf') and distances[u] + poids < distances[v]:
-                raise ValueError("Cycle de poids négatif détecté")
-
-    return distances
+    
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {tab[grillage.idEcole]} minutes\n"
+    )
+    for sommet in fleches[grillage.idEcole]:
+        grillage.canvas.itemconfig(sommet, fill="yellow")
