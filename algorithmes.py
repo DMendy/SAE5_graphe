@@ -295,6 +295,14 @@ def a_star(graphe, source, objectif, heuristique):
 
 
 def bellmanFord(grillage):
+    """Algorithme de Bellman-Ford sur la grille avec animation.
+
+    Args:
+        grillage: Instance de l'interface contenant la grille et le canvas.
+
+    Returns:
+        None.
+    """
     grillage.canvas.delete("fleche")
 
     sommets = grillage.dico_coord.keys()
