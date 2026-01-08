@@ -215,6 +215,14 @@ def dijkstra(grillage):
 
 
 def glouton(grillage):
+    """Recherche gloutonne sur la grille avec animation.
+
+    Args:
+        grillage: Instance de l'interface contenant la grille et le canvas.
+
+    Returns:
+        None.
+    """
     visites=[]
     grillage.canvas.delete("fleche")
     source,objectif = grillage.idMaison,grillage.idEcole
@@ -246,6 +254,17 @@ def glouton(grillage):
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
 def a_star(graphe, source, objectif, heuristique):
+    """Algorithme A* sur un graphe pondéré.
+
+    Args:
+        graphe: Dictionnaire {sommet: [(voisin, poids), ...]}.
+        source: Sommet de départ.
+        objectif: Sommet d'arrivée.
+        heuristique: Dictionnaire {sommet: estimation du coût vers l'objectif}.
+
+    Returns:
+        Liste ordonnée des sommets du chemin, ou None si aucun chemin.
+    """
     open_set = {source}
     closed_set = set()
     g = {s: float('inf') for s in graphe}
