@@ -1,4 +1,4 @@
-# 🏠 Mission : Retrouver le Chemin de l'École 🏫
+# Mission : Retrouver le Chemin de l'École
 
 ### Bienvenue dans votre simulateur de théorie des graphes !
 L'objectif est d'aider un élève à rejoindre l'**École** depuis sa **Maison**. Grâce à une interface interactive, vous pouvez observer comment différents algorithmes "réfléchissent" pour trouver leur chemin à travers les obstacles.
