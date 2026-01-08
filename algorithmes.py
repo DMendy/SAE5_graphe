@@ -280,8 +280,8 @@ def bellmanFord(grillage):
     grillage.canvas.delete("fleche")
 
     sommets = grillage.dico_coord.keys()
-    tab = {sommet : float('inf') for sommet in sommets }
-    tab[grillage.idMaison] = 0
+    cout = {sommet : float('inf') for sommet in sommets }
+    cout[grillage.idMaison] = 0
 
     fleches = {sommet : [] for sommet in sommets }
     for i in range(len(sommets)-1):
@@ -289,8 +289,8 @@ def bellmanFord(grillage):
         for sommet in sommets:
             for voisin in grillage.voisins(sommet):
                 poids = grillage.get_cout(voisin)
-                if tab[sommet] != float('inf') and tab[sommet]+poids<tab[voisin]:
-                    tab[voisin] = tab[sommet]+poids
+                if cout[sommet] != float('inf') and cout[sommet]+poids<cout[voisin]:
+                    cout[voisin] = cout[sommet]+poids
                     grillage.canvas.update()
                     sleep(0.01)
                     if fleches.get(voisin):
@@ -300,12 +300,12 @@ def bellmanFord(grillage):
         if not modification:
             break
     
-    if tab[grillage.idEcole] == float('inf') : 
+    if cout[grillage.idEcole] == float('inf') : 
         grillage.zone_text.insert("end","École inaccessible\n")
     else : 
         grillage.zone_text.insert(
             "end",
-            f"Arrivé à l'école en {tab[grillage.idEcole]} minutes\n"
+            f"Arrivé à l'école en {cout[grillage.idEcole]} minutes\n"
         )
         for sommet in fleches[grillage.idEcole]:
             grillage.canvas.itemconfig(sommet, fill="yellow")
