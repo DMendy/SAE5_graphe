@@ -173,52 +173,7 @@ class Grillage:
         #On réinitialise la zone de texte
         self.zone_text.delete("1.0","end")  
                   
-    def generer_graphe(self):
-        graphe = {}
-        depart = None
-        objectif = None
-        # On stocke les positions pour retrouver les voisins facilement
-        # Ici, une simple logique de distance entre centres d'hexagones suffit
-
-        # 1. Identifier les rôles de chaque hexagone
-        all_items = self.canvas.find_all()
-        for item in all_items:
-            color = self.get_couleur(item)
-            if color == "black": continue  # On ignore les murs
-
-            if color == "green": depart = item
-            if color == "red": objectif = item
-
-            # Trouver les voisins (les hexagones proches géométriquement)
-            coords_item = self.canvas.coords(item)
-            center_x = sum(coords_item[0::2]) / 6
-            center_y = sum(coords_item[1::2]) / 6
-
-            voisins = []
-            # Rayon de recherche légèrement supérieur à la distance entre deux centres
-            seuil = self.size * 1.8
-
-            for potential in all_items:
-                if potential == item: continue
-                couleur_potentielle = self.get_couleur(potential)
-                if couleur_potentielle == "black": continue
-
-                coords_p = self.canvas.coords(potential)
-                px = sum(coords_p[0::2]) / 6
-                py = sum(coords_p[1::2]) / 6
-
-                dist = math.sqrt((center_x - px) ** 2 + (center_y - py) ** 2)
-                if dist < seuil:
-                    # On ajoute le voisin avec un poids par défaut de 1
-                    poids = 1
-                    if couleur_potentielle == "blue":
-                        poids = 4
-                    voisins.append((potential, poids))
-
-            graphe[item] = voisins
-
-        return graphe, depart, objectif
-
+    
     def executer_dijkstra(self):
         algo.dijkstra(self)
 
