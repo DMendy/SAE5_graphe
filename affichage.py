@@ -185,15 +185,19 @@ class Grillage:
         self.canvas.itemconfig(self.idEcole, fill="red")
         #On supprime les flèches
         self.canvas.delete("fleche")
+        self.canvas.delete("nombre")
         #On réinitialise la zone de texte
         self.zone_text.delete("1.0","end")  
                   
-    
+    def effacer_fleches(self) :
+        self.canvas.delete("fleche")
+        self.canvas.delete("nombre")
+        
     def executer_dijkstra(self):
         """Lance l'algorithme de Dijkstra via le module externe."""
         algo.dijkstra(self)
 
-    def tracer_fleche(self,hexa1,hexa2):
+    def tracer_fleche(self,hexa1,hexa2,chiffre):
         """Dessine une flèche entre deux hexagones pour visualiser le chemin."""
         if hexa1 and hexa2 : 
             for fleche in self.canvas.find_withtag("fleche") : 
@@ -201,7 +205,8 @@ class Grillage:
             coords_hexa1,coords_hexa2 = self.canvas.bbox(hexa1),self.canvas.bbox(hexa2)
             x1,y1 = (coords_hexa1[0]+coords_hexa1[2])/2,(coords_hexa1[1]+coords_hexa1[3])/2
             x2,y2 = (coords_hexa2[0]+coords_hexa2[2])/2,(coords_hexa2[1]+coords_hexa2[3])/2
-            return self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="red",width=10,tags="fleche")
+            return (self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="red",width=10,tags="fleche"),
+                    self.canvas.create_text(x2+8, y2-8, text=str(chiffre), fill="black", font=("Arial", 8),tags="nombre"))
     
     def get_dist(self,hexa1,hexa2):
         """Calcul de la distance de Manhattan."""

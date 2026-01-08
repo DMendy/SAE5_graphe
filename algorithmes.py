@@ -13,7 +13,7 @@ def dfs(grillage):
     visites = []
     chemin_final=[]
     cout_final = 0
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
     while pile:
@@ -24,8 +24,9 @@ def dfs(grillage):
             visites.append(sommet)
             voisins = grillage.voisins(sommet)
 
-            fleche = grillage.tracer_fleche(parent,sommet)
-            chemin.append(fleche)
+            if parent:
+                fleche = grillage.tracer_fleche(parent,sommet,cout)
+                chemin.append(fleche)
 
             if sommet == objectif:
                 chemin_final = chemin[:]
@@ -39,9 +40,9 @@ def dfs(grillage):
     if cout_final== 0:
         grillage.zone_text.insert("end",f"École inaccessible\n")
     else:
-        grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+        grillage.zone_text.insert("end",f"Arrivé à l'école en {chemin_final} minutes\n")
         for sommet in chemin_final:
-            grillage.canvas.itemconfig(sommet, fill="yellow")
+            grillage.canvas.itemconfig(sommet[0], fill="yellow")
 
 def bfs(grillage):
     """Parcours en largeur (BFS) sur la grille avec animation.
@@ -55,7 +56,7 @@ def bfs(grillage):
     visites = []
     chemin_final=[]
     cout_final = 0
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
     while pile:
@@ -66,8 +67,9 @@ def bfs(grillage):
             visites.append(sommet)
             voisins = grillage.voisins(sommet)
 
-            fleche = grillage.tracer_fleche(parent,sommet)
-            chemin.append(fleche)
+            if parent:
+                fleche = grillage.tracer_fleche(parent,sommet,cout)
+                chemin.append(fleche)
 
             if sommet == objectif:
                 chemin_final = chemin[:]
@@ -84,7 +86,7 @@ def bfs(grillage):
     else:
         grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
         for sommet in chemin_final:
-            grillage.canvas.itemconfig(sommet, fill="yellow")
+            grillage.canvas.itemconfig(sommet[0], fill="yellow")
 
 
 
@@ -112,7 +114,7 @@ def dijkstra(grillage):
     Returns:
         Liste des identifiants de flèches du chemin optimal, ou None si inaccessible.
     """
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
 
     source, objectif = grillage.idMaison, grillage.idEcole
 
@@ -146,7 +148,7 @@ def dijkstra(grillage):
             if nouvelle_distance < distances.get(voisin, float("inf")):
                 distances[voisin] = nouvelle_distance
                 precedents[voisin] = courant
-                fleches[voisin] = fleches[courant]+[grillage.tracer_fleche(courant,voisin)]
+                fleches[voisin] = fleches[courant]+[grillage.tracer_fleche(courant,voisin,distances[voisin])]
                 a_traiter.append(voisin)
 
     if objectif not in distances:
@@ -158,7 +160,7 @@ def dijkstra(grillage):
         f"Arrivé à l'école en {distances[objectif]} minutes\n"
     )
     for fleche in fleches[objectif]:
-        grillage.canvas.itemconfig(fleche, fill="yellow")
+        grillage.canvas.itemconfig(fleche[0], fill="yellow")
 
 
 def glouton(grillage):
@@ -171,7 +173,7 @@ def glouton(grillage):
         None.
     """
     visites=[]
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
     cout = 0
     best_voisin = None
@@ -192,7 +194,7 @@ def glouton(grillage):
             return
         
         cout+=grillage.get_cout(best_voisin)
-        grillage.tracer_fleche(source,best_voisin)
+        grillage.tracer_fleche(source,best_voisin,cout)
         source = best_voisin
         best_voisin = None
 
@@ -210,7 +212,7 @@ def a_star(grillage):
         None.
     """
     
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
 
     source, objectif = grillage.idMaison, grillage.idEcole
 
@@ -250,7 +252,7 @@ def a_star(grillage):
                 g[voisin] = tentative_g
                 precedents[voisin] = courant
                 fleches[voisin] = (
-                    fleches[courant] + [grillage.tracer_fleche(courant, voisin)]
+                    fleches[courant] + [grillage.tracer_fleche(courant, voisin,g[voisin])]
                 )
                 if voisin not in open_set:
                     open_set.append(voisin)
@@ -277,7 +279,7 @@ def bellmanFord(grillage):
     Returns:
         None.
     """
-    grillage.canvas.delete("fleche")
+    grillage.effacer_fleches()
 
     sommets = grillage.dico_coord.keys()
     cout = {sommet : float('inf') for sommet in sommets }
@@ -294,8 +296,9 @@ def bellmanFord(grillage):
                     grillage.canvas.update()
                     sleep(0.005)
                     if fleches.get(voisin):
-                        grillage.canvas.delete(fleches[voisin][-1])
-                    fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin)]
+                        grillage.canvas.delete(fleches[voisin][-1][0])
+                        grillage.canvas.delete(fleches[voisin][-1][1])
+                    fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin,cout[voisin])]
                     modification = True
         if not modification:
             break
