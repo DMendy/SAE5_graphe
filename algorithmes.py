@@ -38,7 +38,7 @@ def dfs(grillage):
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
     if cout_final== 0:
-        grillage.zone_text.insert("end",f"École inaccessible")
+        grillage.zone_text.insert("end",f"École inaccessible\n")
     else:
         grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
         for sommet in chemin_final:
@@ -84,7 +84,7 @@ def bfs(grillage):
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
 
     if cout_final== 0:
-        grillage.zone_text.insert("end",f"École inaccessible")
+        grillage.zone_text.insert("end",f"École inaccessible\n")
     else:
         grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
         for sommet in chemin_final:
@@ -277,9 +277,12 @@ def bellmanFord(grillage):
         if not modification:
             break
     
-    grillage.zone_text.insert(
-        "end",
-        f"Arrivé à l'école en {tab[grillage.idEcole]} minutes\n"
-    )
-    for sommet in fleches[grillage.idEcole]:
-        grillage.canvas.itemconfig(sommet, fill="yellow")
+    if tab[grillage.idEcole] == float('inf') : 
+        grillage.zone_text.insert("end","École inaccessible\n")
+    else : 
+        grillage.zone_text.insert(
+            "end",
+            f"Arrivé à l'école en {tab[grillage.idEcole]} minutes\n"
+        )
+        for sommet in fleches[grillage.idEcole]:
+            grillage.canvas.itemconfig(sommet, fill="yellow")
