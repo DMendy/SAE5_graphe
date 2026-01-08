@@ -33,25 +33,25 @@ class Grillage:
 
         # Ajout des boutons du jeu
 
-        self.bouton_pink = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("pink"))
+        self.bouton_pink = tk.Button(self.toolbar, text="Maison",bg="pink", command=lambda: self.changer_mode("pink"))
         self.bouton_pink.grid(row=0, column=0, padx=10, pady=10)
 
-        self.bouton_red = tk.Button(self.toolbar, text="École", command=lambda: self.changer_mode("red"))
+        self.bouton_red = tk.Button(self.toolbar, text="École", bg="red", command=lambda: self.changer_mode("red"))
         self.bouton_red.grid(row=0, column=1, padx=10, pady=10)
 
-        self.bouton_forest = tk.Button(self.toolbar, text="Forêt", command=lambda: self.changer_mode("green"))
-        self.bouton_forest.grid(row=0, column=5, padx=10, pady=10)
+        self.bouton_forest = tk.Button(self.toolbar, text="Forêt", bg="green", command=lambda: self.changer_mode("green"))
+        self.bouton_forest.grid(row=0, column=2, padx=10, pady=10)
 
-        self.bouton_black = tk.Button(self.toolbar, text="Placer un mur", command=lambda: self.changer_mode("black"))
-        self.bouton_black.grid(row=0, column=2, padx=10, pady=10)
+        self.bouton_black = tk.Button(self.toolbar, text="Placer un mur", bg="black", fg="white" , command=lambda: self.changer_mode("black"))
+        self.bouton_black.grid(row=0, column=4, padx=10, pady=10)
 
 
-        self.bouton_blue = tk.Button(self.toolbar, text="Rivière", command=lambda: self.changer_mode("blue"))
+        self.bouton_blue = tk.Button(self.toolbar, text="Rivière", bg="blue", command=lambda: self.changer_mode("blue"))
         self.bouton_blue.grid(row=0, column=3, padx=10, pady=10)
 
 
         self.bouton_white = tk.Button(self.toolbar, text="Effacer", command=lambda: self.changer_mode("white"))
-        self.bouton_white.grid(row=0, column=4, padx=10, pady=10)
+        self.bouton_white.grid(row=0, column=5, padx=10, pady=10)
 
         self.actionbar = tk.Frame(root)
         self.actionbar.grid(row=1, column=1, pady=5)
@@ -181,7 +181,7 @@ class Grillage:
             self.canvas.itemconfig(hexa, fill=self.mode)
         #On réinitialise la maison et l'école
         self.idEcole,self.idMaison = self.dico_hexa[(19,19)],self.dico_hexa[(1,0)]
-        self.canvas.itemconfig(self.idMaison, fill="green")
+        self.canvas.itemconfig(self.idMaison, fill="pink")
         self.canvas.itemconfig(self.idEcole, fill="red")
         #On supprime les flèches
         self.canvas.delete("fleche")
@@ -226,6 +226,6 @@ class Grillage:
         elif couleur == "green":
             return 3
         elif couleur == "blue":
-            return 5 
+            return 5
         else : 
             return 0
