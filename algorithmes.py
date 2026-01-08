@@ -2,23 +2,10 @@ from collections import deque
 from time import sleep
 import random
 
-def dfs_iteratif(graphe, source):
-    visites = set()
-    pile = [(source, 0)]
-
-    while pile:
-        sommet, cout = pile.pop()
-
-        if sommet not in visites:
-            visites.add(sommet)
-            print(f"Visite {sommet} | Coût cumulé : {cout}")
-
-            for voisin, poids in reversed(graphe[sommet]):
-                if voisin not in visites:
-                    pile.append((voisin, cout + poids))
-
 def dfs(grillage):
     visites = []
+    chemin_final=[]
+    cout_final = 0
     grillage.canvas.delete("fleche")
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
@@ -39,7 +26,7 @@ def dfs(grillage):
             
             random.shuffle(voisins)
             for voisin in voisins:
-                poids = 1 if grillage.canvas.itemcget(voisin, "fill") != "blue" else 5
+                poids = grillage.get_cout(voisin)
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
 
@@ -47,38 +34,41 @@ def dfs(grillage):
     for sommet in chemin_final:
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
+def bfs(grillage):
+    visites = []
+    chemin_final=[]
+    cout_final = 0
+    grillage.canvas.delete("fleche")
+    source,objectif = grillage.idMaison,grillage.idEcole
+    pile = [(source, 0,None,[])]
+    cout_commun = 0
+    while pile:
+        grillage.canvas.update()
+        sommet, cout,parent,chemin = pile.pop(0)
+        if sommet not in visites:
+            if cout_commun != cout:
+                cout_commun = cout
+                sleep(0.05)
+            visites.append(sommet)
+            voisins = grillage.voisins(sommet)
 
-def dijkstra_iteratif(graphe, source, objectif):
-    distances = {sommet: float('inf') for sommet in graphe}
-    distances[source] = 0
-    precedents = {source: None}
-    non_visites = list(graphe.keys())
-    
-    while non_visites:
-        noeud_courant = min(non_visites, key=lambda node: distances[node])
-        print(f"Visite du sommet '{noeud_courant}' avec une distance cumulée de {distances[noeud_courant]}")
+            fleche = grillage.tracer_fleche(parent,sommet)
+            chemin.append(fleche)
 
-        if noeud_courant == objectif:
-            print(f"Objectif '{objectif}' atteint!")
-            chemin = []
-            while noeud_courant is not None:
-                chemin.append(noeud_courant)
-                noeud_courant = precedents[noeud_courant]
-            return chemin[::-1]
-        
-        for voisin, distance in graphe[noeud_courant]:
-            nouvelle_distance = distances[noeud_courant] + distance
-            if nouvelle_distance < distances[voisin]:
-                distances[voisin] = nouvelle_distance
-                precedents[voisin] = noeud_courant
-        
-        non_visites.remove(noeud_courant)
+            if sommet == objectif:
+                chemin_final = chemin[:]
+                cout_final = cout
+            
+            random.shuffle(voisins)
+            for voisin in voisins:
+                poids = grillage.get_cout(voisin)
+                if voisin not in visites:
+                    pile.append((voisin, cout + poids,sommet,chemin[:]))
 
-    print(f"Objectif '{objectif}' inaccessible.")
-    return None
+    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
+    for sommet in chemin_final:
+        grillage.canvas.itemconfig(sommet, fill="yellow")
 
-def _dijkstra_poids(grillage, node):
-    return 1 if grillage.canvas.itemcget(node, "fill") != "blue" else 5
 
 
 def _dijkstra_choisir(distances, a_traiter):
@@ -122,6 +112,7 @@ def dijkstra(grillage):
 
     distances = {source: 0}
     precedents = {source: None}
+    fleches = {sommet : [] for sommet in grillage.dico_coord.keys()}
 
     a_traiter = [source]
     visites = set()
@@ -143,14 +134,14 @@ def dijkstra(grillage):
         random.shuffle(voisins)
 
         for voisin in voisins:
-            poids = _dijkstra_poids(grillage, voisin)
+            poids = grillage.get_cout(voisin)
             nouvelle_distance = distances[courant] + poids
 
             if nouvelle_distance < distances.get(voisin, float("inf")):
                 distances[voisin] = nouvelle_distance
                 precedents[voisin] = courant
+                fleches[voisin] = fleches[courant]+[grillage.tracer_fleche(courant,voisin)]
                 a_traiter.append(voisin)
-                grillage.tracer_fleche(courant, voisin)
 
     if objectif not in distances:
         grillage.zone_text.insert("end", "École inaccessible.\n")
@@ -162,26 +153,36 @@ def dijkstra(grillage):
     return chemin
 
 
-def methode_gloutonne_iteratif(graphe, source, objectif, heuristique):
-    noeud_courant = source
-    chemin = [noeud_courant]
-    visites = set()
+def glouton(grillage):
+    visites=[]
+    grillage.canvas.delete("fleche")
+    source,objectif = grillage.idMaison,grillage.idEcole
+    cout = 0
+    best_voisin = None
+    while source != objectif :
+        visites.append(source)
+        grillage.canvas.update()
+        sleep(0.05)
+        voisins = grillage.voisins(source)
+        min = float('inf')
 
-    while noeud_courant != objectif:
-        visites.add(noeud_courant)
-        voisins_non_visites = [(voisin, distance) for voisin, distance in graphe[noeud_courant] if voisin not in visites]
+        for voisin in voisins :
+            if voisin not in visites and grillage.get_dist(voisin,objectif) <min: 
+                min = grillage.get_dist(voisin,objectif) 
+                best_voisin = voisin
+
+        if not best_voisin:#Si aucun voisin non visité
+            grillage.zone_text.insert("end",f"Je n'arrive pas à aller à l'école\n")
+            return
         
-        if not voisins_non_visites:
-            print(f"Aucun voisin non visité disponible depuis '{noeud_courant}'. L'algorithme échoue.")
-            return None
-        
-        prochain_noeud, _ = min(voisins_non_visites, key=lambda x: heuristique[x[0]])
-        print(f"Avance vers '{prochain_noeud}' avec une heuristique de {heuristique[prochain_noeud]}")
-        chemin.append(prochain_noeud)
-        noeud_courant = prochain_noeud
-    
-    print(f"Objectif '{objectif}' atteint!")
-    return chemin
+        cout+=grillage.get_cout(best_voisin)
+        grillage.tracer_fleche(source,best_voisin)
+        source = best_voisin
+        best_voisin = None
+
+    grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
+    for sommet in grillage.canvas.find_withtag("fleche"):
+        grillage.canvas.itemconfig(sommet, fill="yellow")
 
 def a_star(graphe, source, objectif, heuristique):
     open_set = {source}
@@ -212,40 +213,34 @@ def a_star(graphe, source, objectif, heuristique):
                 open_set.add(voisin)
     return None
 
-def bfs_iteratif(graphe, source):
-    visites = set()
-    file = deque([source])
 
-    visites.add(source)
+def bellmanFord(grillage):
+    grillage.canvas.delete("fleche")
 
-    while file:
-        sommet = file.popleft()
-        print(f"Visite {sommet}")
+    sommets = grillage.dico_coord.keys()
+    tab = {sommet : float('inf') for sommet in sommets }
+    tab[grillage.idMaison] = 0
 
-        for voisin, _ in graphe[sommet]:
-            if voisin not in visites:
-                visites.add(voisin)
-                file.append(voisin)
-
-
-def bellman_ford(graphe, source):
-    distances = {sommet: float('inf') for sommet in graphe}
-    distances[source] = 0
-
-    for _ in range(len(graphe) - 1):
-        modifie = False
-        for u in graphe:
-            for v, poids in graphe[u]:
-                if distances[u] != float('inf') and distances[u] + poids < distances[v]:
-                    distances[v] = distances[u] + poids
-                    modifie = True
-        if not modifie:
+    fleches = {sommet : [] for sommet in sommets }
+    for i in range(len(sommets)-1):
+        modification = False
+        for sommet in sommets:
+            for voisin in grillage.voisins(sommet):
+                poids = grillage.get_cout(voisin)
+                if tab[sommet] != float('inf') and tab[sommet]+poids<tab[voisin]:
+                    tab[voisin] = tab[sommet]+poids
+                    grillage.canvas.update()
+                    sleep(0.01)
+                    if fleches.get(voisin):
+                        grillage.canvas.delete(fleches[voisin][-1])
+                    fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin)]
+                    modification = True
+        if not modification:
             break
-
-    # Si cycle négatif
-    for u in graphe:
-        for v, poids in graphe[u]:
-            if distances[u] != float('inf') and distances[u] + poids < distances[v]:
-                raise ValueError("Cycle de poids négatif détecté")
-
-    return distances
+    
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {tab[grillage.idEcole]} minutes\n"
+    )
+    for sommet in fleches[grillage.idEcole]:
+        grillage.canvas.itemconfig(sommet, fill="yellow")

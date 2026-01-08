@@ -51,18 +51,27 @@ class Grillage:
         self.actionbar = tk.Frame(root)
         self.actionbar.grid(row=1, column=1, pady=5)
 
-        self.bouton_reset = tk.Button(self.actionbar, text="Reset", command=lambda: self.reset())
-        self.bouton_reset.grid(row=1, column=0, padx=10, pady=10)
-
         self.bouton_dijkstra = tk.Button(self.actionbar, text="Dijkstra", command=self.executer_dijkstra)
-        self.bouton_dijkstra.grid(row=0, column=0, padx=10)
+        self.bouton_dijkstra.grid(row=0, column=0, padx=10, pady=5)
 
-        self.zone_text = tk.Text(self.actionbar,height=15, width=40)
-        self.zone_text.grid(row=3,column=0,pady=10,padx=10)
+        self.bouton_glouton = tk.Button(self.actionbar, text="Parcours griddy", command=lambda : algo.glouton(self))
+        self.bouton_glouton.grid(row=1, column=0, padx=10, pady=5)
 
-        self.bouton_dfs = tk.Button(self.actionbar, text="Parcours en largeur", command=lambda : algo.dfs(self))
-        self.bouton_dfs.grid(row=2, column=0, padx=10)
+        self.bouton_dfs = tk.Button(self.actionbar, text="Parcours en profondeur", command=lambda : algo.dfs(self))
+        self.bouton_dfs.grid(row=2, column=0, padx=10, pady=5)
+
+        self.bouton_bfs = tk.Button(self.actionbar, text="Parcours en largeur", command=lambda : algo.bfs(self))
+        self.bouton_bfs.grid(row=3, column=0, padx=10, pady=5)
+
+        self.bouton_bellman = tk.Button(self.actionbar, text="Bellman-Ford", command=lambda : algo.bellmanFord(self))
+        self.bouton_bellman.grid(row=4, column=0, padx=10, pady=5)
     
+        self.zone_text = tk.Text(self.actionbar,height=15, width=40)
+        self.zone_text.grid(row=self.actionbar.grid_size()[1],column=0,pady=10,padx=10)
+
+        self.bouton_reset = tk.Button(self.actionbar, text="Reset", command=lambda: self.reset())
+        self.bouton_reset.grid(row=self.actionbar.grid_size()[1], column=0, padx=10, pady=10)
+
     def draw_hexagon(self, x, y, size):
         points = []
         for i in range(6):
@@ -231,7 +240,7 @@ class Grillage:
 
             return int(max(abs(z1-z2),abs(w1-w2),abs(x1-x2)))
     def get_couleur(self,hexa):
-        return self.canvas.itemcget(hexa, "fill")
+        return self.canvas.itemcget(hexa,"fill")
     
     def get_cout(self,hexa):
         couleur = self.get_couleur(hexa)
