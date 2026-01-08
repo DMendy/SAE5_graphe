@@ -102,62 +102,6 @@ def _dijkstra_choisir(distances, a_traiter):
     return courant
 
 
-def _dijkstra_reconstruire(precedents, objectif):
-    """Reconstruit le chemin de la source vers l'objectif.
-
-    Args:
-        precedents: Dictionnaire des précédents par sommet.
-        objectif: Sommet d'arrivée.
-
-    Returns:
-        Liste ordonnée des sommets du chemin.
-    """
-    chemin = []
-    cur = objectif
-    while cur is not None:
-        chemin.append(cur)
-        cur = precedents[cur]
-    chemin.reverse()
-    return chemin
-
-
-def _dijkstra_fleches(grillage, noeuds):
-    """Transforme un chemin de noeuds en flèches sur le canvas.
-
-    Args:
-        grillage: Instance de l'interface contenant la grille et le canvas.
-        noeuds: Liste ordonnée des sommets du chemin.
-
-    Returns:
-        Liste des identifiants de flèches créées.
-    """
-    fleches = []
-    for i in range(len(noeuds) - 1):
-        fleche = grillage.tracer_fleche(noeuds[i], noeuds[i + 1])
-        if fleche:
-            fleches.append(fleche)
-    return fleches
-
-
-def _dijkstra_afficher(grillage, fleches, cout_total):
-    """Affiche le résultat et colore les flèches du chemin.
-
-    Args:
-        grillage: Instance de l'interface contenant la grille et le canvas.
-        fleches: Liste des identifiants de flèches du chemin.
-        cout_total: Coût total du chemin.
-
-    Returns:
-        None.
-    """
-    grillage.zone_text.insert(
-        "end",
-        f"Arrivé à l'école en {cout_total} minutes\n"
-    )
-    for fleche in fleches:
-        grillage.canvas.itemconfig(fleche, fill="yellow")
-
-
 def dijkstra(grillage):
     """Algorithme de Dijkstra sur la grille avec animation.
 
@@ -208,10 +152,12 @@ def dijkstra(grillage):
         grillage.zone_text.insert("end", "École inaccessible.\n")
         return None
 
-    noeuds = _dijkstra_reconstruire(precedents, objectif)
-    chemin = _dijkstra_fleches(grillage, noeuds)
-    _dijkstra_afficher(grillage, chemin, distances[objectif])
-    return chemin
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {distances[objectif]} minutes\n"
+    )
+    for fleche in fleches[objectif]:
+        grillage.canvas.itemconfig(fleche, fill="yellow")
 
 
 def glouton(grillage):
