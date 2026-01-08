@@ -5,6 +5,10 @@ import algorithmes as algo
 
 
 class Grillage:
+    """
+    Classe principale gérant l'interface graphique Tkinter pour la visualisation
+    du graphe sous forme de grille hexagonale.
+    """
     def __init__(self, root):
         self.root = root
         self.HEIGHT = 800
@@ -27,7 +31,7 @@ class Grillage:
 
         self.mode = "white"  # Mode par défaut : couleur des carrés
 
-        # Ajout des boutons
+        # Ajout des boutons du jeu
 
         self.bouton_pink = tk.Button(self.toolbar, text="Maison", command=lambda: self.changer_mode("pink"))
         self.bouton_pink.grid(row=0, column=0, padx=10, pady=10)
@@ -67,7 +71,7 @@ class Grillage:
         self.bouton_bellman = tk.Button(self.actionbar, text="Bellman-Ford", command=lambda : algo.bellmanFord(self))
         self.bouton_bellman.grid(row=4, column=0, padx=10, pady=5)
 
-        self.bouton_bellman = tk.Button(self.actionbar, text="A*", command=lambda : algo.a_star(self))
+        self.bouton_bellman = tk.Button(self.actionbar, text="Algorithme A*", command=lambda : algo.a_star(self))
         self.bouton_bellman.grid(row=5, column=0, padx=10, pady=5)
     
         self.zone_text = tk.Text(self.actionbar,height=15, width=40)
@@ -77,6 +81,7 @@ class Grillage:
         self.bouton_reset.grid(row=self.actionbar.grid_size()[1], column=0, padx=10, pady=10)
 
     def draw_hexagon(self, x, y, size):
+        """Calcule les points et dessine un hexagone régulier."""
         points = []
         for i in range(6):
             # On ajoute math.pi / 6 pour pivoter l'hexagone
@@ -88,6 +93,7 @@ class Grillage:
         return self.canvas.create_polygon(points, outline="black", fill="white", width=2)
 
     def dessiner_grille(self):
+        """Génère la grille hexagonale avec décalage pour les lignes impaires."""
         # Création de la grille
         horizontal_spacing = math.sqrt(3) * self.size
         vertical_spacing = 1.5 * self.size 
@@ -121,6 +127,7 @@ class Grillage:
         self.canvas.itemconfig(self.idEcole, fill="red")
         
     def voisins(self,hexa):
+        """Retourne la liste des hexagones adjacents non bloqués par un mur."""
         voisins = []
         row,col = self.dico_coord[hexa]
         if row % 2 == 0:
@@ -136,6 +143,7 @@ class Grillage:
 
 
     def on_drag(self, event):
+        """Permet de colorier plusieurs cases en glissant la souris."""
         # Trouve l'élément sous le curseur pendant le mouvement
         if self.mode not in ["pink","red"] :
             item = self.canvas.find_closest(event.x, event.y)
@@ -144,11 +152,13 @@ class Grillage:
 
 
     def changer_mode(self, mode):
+        """Définit quel type de terrain sera placé au prochain clic."""
         #Changer le mode
         self.mode = mode
 
 
     def changer_couleur(self, item_id):
+        """Applique la couleur du mode actuel à l'hexagone sélectionné."""
         #Changer la couleur du carré lorsqu'on clique dessus
         current_color = self.get_couleur(item_id)
         if current_color != self.mode and not (current_color in ["pink","red"] and self.mode!="white"):
@@ -163,6 +173,7 @@ class Grillage:
             self.canvas.itemconfig(item_id, fill=self.mode)
             
     def reset (self):
+        """Réinitialise toute la grille à l'état initial (tout blanc)."""
         #On réinitialise le mode
         self.changer_mode("white")
         #On remet tous les hexagones en blanc
@@ -179,9 +190,11 @@ class Grillage:
                   
     
     def executer_dijkstra(self):
+        """Lance l'algorithme de Dijkstra via le module externe."""
         algo.dijkstra(self)
 
     def tracer_fleche(self,hexa1,hexa2):
+        """Dessine une flèche entre deux hexagones pour visualiser le chemin."""
         if hexa1 and hexa2 : 
             for fleche in self.canvas.find_withtag("fleche") : 
                 self.canvas.itemconfig(fleche, fill="grey")
@@ -191,6 +204,7 @@ class Grillage:
             return self.canvas.create_line(x1, y1, x2, y2,arrow="last",fill="red",width=10,tags="fleche")
     
     def get_dist(self,hexa1,hexa2):
+        """Calcul de la distance de Manhattan."""
         if hexa1 and hexa2:
             x1,y1 = self.dico_coord[hexa1]
             x2,y2 = self.dico_coord[hexa2]
@@ -201,9 +215,11 @@ class Grillage:
 
             return int(max(abs(z1-z2),abs(w1-w2),abs(x1-x2)))
     def get_couleur(self,hexa):
+        """Retourne la couleur actuelle d'un hexagone."""
         return self.canvas.itemcget(hexa,"fill")
     
     def get_cout(self,hexa):
+        """Associe un coût (temps en minutes) à chaque couleur de case."""
         couleur = self.get_couleur(hexa)
         if couleur == "white" or couleur=="red":
             return 1
