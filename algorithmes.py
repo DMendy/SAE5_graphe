@@ -58,14 +58,11 @@ def bfs(grillage):
     grillage.canvas.delete("fleche")
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
-    cout_commun = 0
     while pile:
         grillage.canvas.update()
         sommet, cout,parent,chemin = pile.pop(0)
         if sommet not in visites:
-            if cout_commun != cout:
-                cout_commun = cout
-                sleep(0.05)
+            sleep(0.05)
             visites.append(sommet)
             voisins = grillage.voisins(sommet)
 
@@ -207,13 +204,10 @@ def a_star(grillage):
     """Algorithme A* sur un graphe pondéré.
 
     Args:
-        graphe: Dictionnaire {sommet: [(voisin, poids), ...]}.
-        source: Sommet de départ.
-        objectif: Sommet d'arrivée.
-        heuristique: Dictionnaire {sommet: estimation du coût vers l'objectif}.
+        grillage: Instance de l'interface contenant la grille et le canvas.
 
     Returns:
-        Liste ordonnée des sommets du chemin, ou None si aucun chemin.
+        None.
     """
     
     grillage.canvas.delete("fleche")
@@ -256,8 +250,7 @@ def a_star(grillage):
                 g[voisin] = tentative_g
                 precedents[voisin] = courant
                 fleches[voisin] = (
-                    fleches[courant]
-                    + [grillage.tracer_fleche(courant, voisin)]
+                    fleches[courant] + [grillage.tracer_fleche(courant, voisin)]
                 )
                 if voisin not in open_set:
                     open_set.append(voisin)
