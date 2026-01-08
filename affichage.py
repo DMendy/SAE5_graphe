@@ -77,8 +77,14 @@ class Grillage:
         self.zone_text = tk.Text(self.actionbar,height=15, width=40)
         self.zone_text.grid(row=self.actionbar.grid_size()[1],column=0,pady=10,padx=10)
 
-        self.bouton_reset = tk.Button(self.actionbar, text="Reset", command=lambda: self.reset())
-        self.bouton_reset.grid(row=self.actionbar.grid_size()[1], column=0, padx=10, pady=10)
+        self.Supp = tk.Frame(self.actionbar)
+        self.Supp.grid(row=self.actionbar.grid_size()[1], column=0, pady=5)
+
+        self.bouton_reset = tk.Button(self.Supp, text="Reset", command=self.reset)
+        self.bouton_reset.grid(row=0, column=1, padx=10, pady=10)
+
+        self.bouton_effaceFleche = tk.Button(self.Supp, text="Effacer les flèches", command=self.effacer_fleches)
+        self.bouton_effaceFleche.grid(row=0, column=0, padx=10, pady=10)
 
     def draw_hexagon(self, x, y, size):
         """Calcule les points et dessine un hexagone régulier."""
@@ -192,7 +198,7 @@ class Grillage:
     def effacer_fleches(self) :
         self.canvas.delete("fleche")
         self.canvas.delete("nombre")
-        
+
     def executer_dijkstra(self):
         """Lance l'algorithme de Dijkstra via le module externe."""
         algo.dijkstra(self)
