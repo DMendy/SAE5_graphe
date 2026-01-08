@@ -1,4 +1,3 @@
-from collections import deque
 from time import sleep
 import random
 
@@ -204,7 +203,7 @@ def glouton(grillage):
     for sommet in grillage.canvas.find_withtag("fleche"):
         grillage.canvas.itemconfig(sommet, fill="yellow")
 
-def a_star(graphe, source, objectif, heuristique):
+def a_star(grillage):
     """Algorithme A* sur un graphe pondéré.
 
     Args:
@@ -216,33 +215,64 @@ def a_star(graphe, source, objectif, heuristique):
     Returns:
         Liste ordonnée des sommets du chemin, ou None si aucun chemin.
     """
-    open_set = {source}
-    closed_set = set()
-    g = {s: float('inf') for s in graphe}
-    g[source] = 0
+    
+    grillage.canvas.delete("fleche")
+
+    source, objectif = grillage.idMaison, grillage.idEcole
+
+    open_set = [source]
+    visites = set()
+
+    g = {source: 0}
     precedents = {source: None}
+    fleches = {sommet: [] for sommet in grillage.dico_coord.keys()}
 
     while open_set:
-        courant = min(open_set, key=lambda n: g[n] + heuristique[n])
-        if courant == objectif:
-            chemin = []
-            while courant is not None:
-                chemin.append(courant)
-                courant = precedents[courant]
-            return chemin[::-1]
+        grillage.canvas.update()
+        sleep(0.02)
 
+        courant = min(
+            open_set,
+            key=lambda s: g[s] + grillage.get_dist(s, objectif)
+        )
         open_set.remove(courant)
-        closed_set.add(courant)
 
-        for voisin, cout in graphe[courant]:
-            if voisin in closed_set:
+        if courant == objectif:
+            break
+
+        visites.add(courant)
+
+        voisins = grillage.voisins(courant)
+        random.shuffle(voisins)
+
+        for voisin in voisins:
+            if voisin in visites:
                 continue
-            tentative_g = g[courant] + cout
-            if tentative_g < g[voisin]:
+
+            poids = grillage.get_cout(voisin)
+            tentative_g = g[courant] + poids
+
+            if tentative_g < g.get(voisin, float('inf')):
                 g[voisin] = tentative_g
                 precedents[voisin] = courant
-                open_set.add(voisin)
-    return None
+                fleches[voisin] = (
+                    fleches[courant]
+                    + [grillage.tracer_fleche(courant, voisin)]
+                )
+                if voisin not in open_set:
+                    open_set.append(voisin)
+
+    if objectif not in g:
+        grillage.zone_text.insert("end", "École inaccessible\n")
+        return
+
+    grillage.zone_text.insert(
+        "end",
+        f"Arrivé à l'école en {g[objectif]} minutes\n"
+    )
+
+    for fleche in fleches[objectif]:
+        grillage.canvas.itemconfig(fleche, fill="yellow")
 
 
 def bellmanFord(grillage):

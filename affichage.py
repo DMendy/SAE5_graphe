@@ -66,6 +66,9 @@ class Grillage:
 
         self.bouton_bellman = tk.Button(self.actionbar, text="Bellman-Ford", command=lambda : algo.bellmanFord(self))
         self.bouton_bellman.grid(row=4, column=0, padx=10, pady=5)
+
+        self.bouton_bellman = tk.Button(self.actionbar, text="A*", command=lambda : algo.a_star(self))
+        self.bouton_bellman.grid(row=5, column=0, padx=10, pady=5)
     
         self.zone_text = tk.Text(self.actionbar,height=15, width=40)
         self.zone_text.grid(row=self.actionbar.grid_size()[1],column=0,pady=10,padx=10)
