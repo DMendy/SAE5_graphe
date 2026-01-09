@@ -59,7 +59,7 @@ class Grillage:
         self.bouton_dijkstra = tk.Button(self.actionbar, text="Dijkstra", command=self.executer_dijkstra)
         self.bouton_dijkstra.grid(row=0, column=0, padx=10, pady=5)
 
-        self.bouton_glouton = tk.Button(self.actionbar, text="Parcours griddy", command=lambda : algo.glouton(self))
+        self.bouton_glouton = tk.Button(self.actionbar, text="Parcours greedy", command=lambda : algo.glouton(self))
         self.bouton_glouton.grid(row=1, column=0, padx=10, pady=5)
 
         self.bouton_dfs = tk.Button(self.actionbar, text="Parcours en profondeur", command=lambda : algo.dfs(self))
