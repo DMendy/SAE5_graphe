@@ -10,21 +10,21 @@ def dfs(grillage):
     Returns:
         None.
     """
-    visites = []
-    chemin_final=[]
-    cout_final = 0
+    visites = []    #liste des sommets deja visités
+    chemin_final=[]     #chemin final vers l'objectif
+    cout_final = 0      #coût total du chemin final
     grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
-    while pile:
+    while pile: # tant que la pile n'est pas vide
         grillage.canvas.update()
-        sommet, cout,parent,chemin = pile.pop()
+        sommet, cout,parent,chemin = pile.pop()      #depile le dernier sommet ajouté
         if sommet not in visites:
             sleep(0.005)
             visites.append(sommet)
             voisins = grillage.voisins(sommet)
 
-            if parent:
+            if parent:      # si sommet a un parent, on trace la fleche
                 fleche = grillage.tracer_fleche(parent,sommet,cout)
                 chemin.append(fleche)
 
@@ -32,12 +32,12 @@ def dfs(grillage):
                 chemin_final = chemin[:]
                 cout_final = cout
             
-            random.shuffle(voisins)
+            random.shuffle(voisins)     # melange voisins pour une meilleure animation
             for voisin in voisins:
                 poids = grillage.get_cout(voisin)
                 if voisin not in visites:
                     pile.append((voisin, cout + poids,sommet,chemin[:]))
-    if cout_final== 0:
+    if cout_final== 0:      # si aucun chemin trouve
         grillage.zone_text.insert("end",f"École inaccessible\n")
     else:
         grillage.zone_text.insert("end",f"Arrivé à l'école en {chemin_final} minutes\n")
@@ -59,7 +59,7 @@ def bfs(grillage):
     grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
     pile = [(source, 0,None,[])]
-    while pile:
+    while pile:     # tant que la file n'est pas vide
         grillage.canvas.update()
         sommet, cout,parent,chemin = pile.pop(0)
         if sommet not in visites:
@@ -85,7 +85,7 @@ def bfs(grillage):
         grillage.zone_text.insert("end",f"École inaccessible\n")
     else:
         grillage.zone_text.insert("end",f"Arrivé à l'école en {cout_final} minutes\n")
-        for sommet in chemin_final:
+        for sommet in chemin_final:     # colore le chemin final
             grillage.canvas.itemconfig(sommet[0], fill="yellow")
 
 
@@ -100,8 +100,8 @@ def _dijkstra_choisir(distances, a_traiter):
     Returns:
         Le sommet sélectionné.
     """
-    courant = min(a_traiter, key=lambda s: distances[s])
-    a_traiter.remove(courant)
+    courant = min(a_traiter, key=lambda s: distances[s])      # trouve le sommet avec la plus petite distance dans la liste des sommets a traiter
+    a_traiter.remove(courant)   #supprime le sommet choisi de la liste des sommets a traiter
     return courant
 
 
@@ -114,21 +114,21 @@ def dijkstra(grillage):
     Returns:
         Liste des identifiants de flèches du chemin optimal, ou None si inaccessible.
     """
-    grillage.effacer_fleches()
+    grillage.effacer_fleches()  # supprime les fleches precedentes
 
     source, objectif = grillage.idMaison, grillage.idEcole
 
-    distances = {source: 0}
-    precedents = {source: None}
-    fleches = {sommet : [] for sommet in grillage.dico_coord.keys()}
+    distances = {source: 0} # distance depuis la source
+    precedents = {source: None} # pour reconstruire le chemin
+    fleches = {sommet : [] for sommet in grillage.dico_coord.keys()}    #flèches pour chaque sommet
 
-    a_traiter = [source]
-    visites = set()
+    a_traiter = [source]    # liste des sommets a traiter
+    visites = set()     # ensemble des sommets deja visites
 
     while a_traiter:
         grillage.canvas.update()
 
-        courant = _dijkstra_choisir(distances, a_traiter)
+        courant = _dijkstra_choisir(distances, a_traiter)   # prend le sommet le plus proche connu
         if courant in visites:
             continue
         visites.add(courant)
@@ -142,14 +142,16 @@ def dijkstra(grillage):
         random.shuffle(voisins)
 
         for voisin in voisins:
-            poids = grillage.get_cout(voisin)
-            nouvelle_distance = distances[courant] + poids
+            poids = grillage.get_cout(voisin)   # cout pour aller au voisin
+            nouvelle_distance = distances[courant] + poids  # pemet de connaitre la distance depuis source
 
             if nouvelle_distance < distances.get(voisin, float("inf")):
                 distances[voisin] = nouvelle_distance
                 precedents[voisin] = courant
+
+                # ajoute la flèche dans le chemin graphique
                 fleches[voisin] = fleches[courant]+[grillage.tracer_fleche(courant,voisin,distances[voisin])]
-                a_traiter.append(voisin)
+                a_traiter.append(voisin) 
 
     if objectif not in distances:
         grillage.zone_text.insert("end", "École inaccessible.\n")
@@ -175,28 +177,29 @@ def glouton(grillage):
     visites=[]
     grillage.effacer_fleches()
     source,objectif = grillage.idMaison,grillage.idEcole
-    cout = 0
-    best_voisin = None
+    cout = 0    # cout cumule du chemin
+    best_voisin = None  
     while source != objectif :
         visites.append(source)
         grillage.canvas.update()
         sleep(0.05)
         voisins = grillage.voisins(source)
-        min = float('inf')
+        min = float('inf')  # initialise la meilleure distance
 
         for voisin in voisins :
+            # on entre dans la boucle si on a un voisin non visite et plus proche selon l'heuristique
             if voisin not in visites and grillage.get_dist(voisin,objectif) <min: 
                 min = grillage.get_dist(voisin,objectif) 
-                best_voisin = voisin
+                best_voisin = voisin    # selectionne le meilleur voisin
 
         if not best_voisin:#Si aucun voisin non visité
             grillage.zone_text.insert("end",f"Je n'arrive pas à aller à l'école\n")
             return
         
-        cout+=grillage.get_cout(best_voisin)
+        cout+=grillage.get_cout(best_voisin)    # ajoute le cout du voisin
         grillage.tracer_fleche(source,best_voisin,cout)
-        source = best_voisin
-        best_voisin = None
+        source = best_voisin    # permet d'avancer au voisin choisi
+        best_voisin = None      # on met None afin de reset pour la prochaine iteration
 
     grillage.zone_text.insert("end",f"Arrivé à l'école en {cout} minutes\n")
     for sommet in grillage.canvas.find_withtag("fleche"):
@@ -216,22 +219,20 @@ def a_star(grillage):
 
     source, objectif = grillage.idMaison, grillage.idEcole
 
-    open_set = [source]
-    visites = set()
+    a_traiter = [source]
+    visites = set()     # ensemble des sommets deja visites
 
-    g = {source: 0}
-    precedents = {source: None}
+    g = {source: 0}     # cout depuis le depart pour chaque sommet
+    precedents = {source: None}     # sert a reconstruire le chemin
     fleches = {sommet: [] for sommet in grillage.dico_coord.keys()}
 
-    while open_set:
+    while a_traiter:
         grillage.canvas.update()
         sleep(0.02)
 
-        courant = min(
-            open_set,
-            key=lambda s: g[s] + grillage.get_dist(s, objectif)
-        )
-        open_set.remove(courant)
+        # choisi le sommet avec g + heuristique la plus petite
+        courant = min(a_traiter,key=lambda s: g[s] + grillage.get_dist(s, objectif))
+        a_traiter.remove(courant)   # on le retire de la liste a traiter
 
         if courant == objectif:
             break
@@ -245,17 +246,17 @@ def a_star(grillage):
             if voisin in visites:
                 continue
 
-            poids = grillage.get_cout(voisin)
-            tentative_g = g[courant] + poids
+            poids = grillage.get_cout(voisin)   # cout pour aller au voisin
+            tentative_g = g[courant] + poids    # distance depuis le depart  
 
-            if tentative_g < g.get(voisin, float('inf')):
+            if tentative_g < g.get(voisin, float('inf')):   # si le chemin passant par courant est plus court que le chemin qu'on connait deja pour ce voisin, on met a jour
                 g[voisin] = tentative_g
                 precedents[voisin] = courant
                 fleches[voisin] = (
                     fleches[courant] + [grillage.tracer_fleche(courant, voisin,g[voisin])]
                 )
-                if voisin not in open_set:
-                    open_set.append(voisin)
+                if voisin not in a_traiter:
+                    a_traiter.append(voisin)
 
     if objectif not in g:
         grillage.zone_text.insert("end", "École inaccessible\n")
@@ -279,30 +280,37 @@ def bellmanFord(grillage):
     Returns:
         None.
     """
-    grillage.effacer_fleches()
+    grillage.effacer_fleches()  # supprime les fleches precedentes
 
     sommets = grillage.dico_coord.keys()
-    cout = {sommet : float('inf') for sommet in sommets }
+    cout = {sommet : float('inf') for sommet in sommets }   # initialise cout a infinie pour tous les sommets
     cout[grillage.idMaison] = 0
 
-    fleches = {sommet : [] for sommet in sommets }
-    for i in range(len(sommets)-1):
-        modification = False
+    fleches = {sommet : [] for sommet in sommets }  # necessaire pour les chemins graphiques pour chaque sommet
+    for i in range(len(sommets)-1): # on fait |V|-1 iterations
+        modification = False    # permet de detecter si on a mis a jour au moins une distance
         for sommet in sommets:
             for voisin in grillage.voisins(sommet):
-                poids = grillage.get_cout(voisin)
-                if cout[sommet] != float('inf') and cout[sommet]+poids<cout[voisin]:
-                    cout[voisin] = cout[sommet]+poids
+                poids = grillage.get_cout(voisin)   # recupere le cout du voisin
+
+                # si le chemin passant par sommet est meilleur que le chemin connu pour voisin
+                if cout[sommet] != float('inf') and cout[sommet]+poids<cout[voisin]:    
+                    cout[voisin] = cout[sommet]+poids   # on met a jour le cout
                     grillage.canvas.update()
                     sleep(0.005)
+
+                    # si il y avait deja une fleche pour ce voisin, on supprime
                     if fleches.get(voisin):
                         grillage.canvas.delete(fleches[voisin][-1][0])
                         grillage.canvas.delete(fleches[voisin][-1][1])
+
+                        # on copie le chemin du sommet et on ajoute la nouvelle fleche
                     fleches[voisin] = fleches[sommet]+[grillage.tracer_fleche(sommet,voisin,cout[voisin])]
-                    modification = True
-        if not modification:
+                    modification = True # on notifie qu'il y a eu une mise a jour
+        if not modification:    # si aucune distance n'a ete mise a jour, on arrete
             break
     
+    # si l'objectif est inaccessible
     if cout[grillage.idEcole] == float('inf') : 
         grillage.zone_text.insert("end","École inaccessible\n")
     else : 
@@ -310,5 +318,7 @@ def bellmanFord(grillage):
             "end",
             f"Arrivé à l'école en {cout[grillage.idEcole]} minutes\n"
         )
+
+        # colorie le chemin final afin de mieux le visualiser
         for sommet in fleches[grillage.idEcole]:
             grillage.canvas.itemconfig(sommet[0], fill="yellow")
