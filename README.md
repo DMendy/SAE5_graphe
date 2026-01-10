@@ -58,3 +58,6 @@ Ce projet permet de voir que le chemin le plus court "à l'œil nu" n'est pas to
 * Le **Dijkstra** contournera la rivière (temps optimisé).
 
 C'est cette logique qui est utilisée chaque jour par vos applications de GPS entre autres!
+
+
+Note : Pour lancer le logiciel, il faut run le fichier main.py
