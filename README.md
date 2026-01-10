@@ -61,3 +61,4 @@ C'est cette logique qui est utilisée chaque jour par vos applications de GPS en
 
 
 Note : Pour lancer le logiciel, il faut run le fichier main.py
+Composition du groupe : Maryam Koundi, Younes Azirgui, Alexis Dinanga, Doryan Mendy
